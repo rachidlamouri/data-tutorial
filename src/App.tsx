@@ -42,7 +42,7 @@ function ProgressIndicator({ isLearned }: ProgressIndicatorProps) {
 }
 
 function TabProgress() {
-  const { subjectProgress } = useSubjectProgress();
+  const { subjectProgress = [] } = useSubjectProgress();
 
   const chunkSize = 6;
   const chunkCount = Math.ceil(subjectProgress.length / chunkSize);
@@ -51,9 +51,9 @@ function TabProgress() {
     return subjectProgress.slice(startIndex, startIndex + chunkSize);
   });
 
-  return chunks.map((chunk) => {
+  return chunks.map((chunk, chunkIndex) => {
     return (
-      <Stack direction="row">
+      <Stack direction="row" key={chunkIndex}>
         {chunk.map((isLearned, index) => {
           return <ProgressIndicator key={index} isLearned={isLearned} />;
         })}

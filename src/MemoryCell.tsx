@@ -1,4 +1,8 @@
-import { SvgIconComponent, Circle as CircleIcon } from '@mui/icons-material';
+import {
+  SvgIconComponent,
+  Circle as CircleIcon,
+  CircleOutlined,
+} from '@mui/icons-material';
 import { IconButton, IconButtonProps } from '@mui/material';
 import React, { ReactNode, useState } from 'react';
 
@@ -17,6 +21,8 @@ export type MemoryCellProps = {
   value?: boolean;
   size?: IconButtonProps['size'];
   sx?: IconButtonProps['sx'];
+  label?: [string, string];
+  disabled?: boolean;
 };
 
 export function MemoryCell({
@@ -27,6 +33,8 @@ export function MemoryCell({
   size,
   children,
   sx,
+  label,
+  disabled,
 }: MemoryCellProps) {
   const [isInternallyEnabled, setIsInternallyEnabled] = useState(
     initialValue ?? false,
@@ -36,21 +44,29 @@ export function MemoryCell({
   const color = isEnabled ? 'primary' : 'action';
 
   return (
-    <IconButton
-      size={size}
-      onClick={() => {
-        const newValue = !isEnabled;
+    <>
+      <IconButton
+        disabled={disabled}
+        size={size}
+        onClick={() => {
+          const newValue = !isEnabled;
 
-        setIsInternallyEnabled(newValue);
-        onChange?.(newValue);
-      }}
-      sx={sx}
-    >
-      {children ? (
-        children({ color, isEnabled })
-      ) : (
-        <IconComponent color={color} />
-      )}
-    </IconButton>
+          setIsInternallyEnabled(newValue);
+          onChange?.(newValue);
+        }}
+        sx={sx}
+      >
+        {children ? (
+          children({ color, isEnabled })
+        ) : (
+          <IconComponent color={color} />
+        )}
+      </IconButton>
+      {label !== undefined && label[isEnabled ? 1 : 0]}
+    </>
   );
+}
+
+export function ReadOnlyMemoryCell(props: MemoryCellProps) {
+  return <MemoryCell {...props} disabled IconComponent={CircleOutlined} />;
 }

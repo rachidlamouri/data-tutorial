@@ -91,7 +91,6 @@ export function SubjectProvider({
           return learnables[index];
         },
         showAll: () => {
-          console.log('show all');
           setLearnables((previous) => {
             return previous.map((learnable) => {
               return {

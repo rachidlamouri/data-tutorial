@@ -23,8 +23,6 @@ type ProgressProviderProps = PropsWithChildren;
 export function ProgressProvider({ children }: ProgressProviderProps) {
   const [progress, setProgress] = useState<boolean[][]>(subjects.map(() => []));
 
-  console.log({ progress });
-
   return (
     <ProgressContext.Provider
       value={{
@@ -73,7 +71,6 @@ export const useSubjectProgress = () => {
   return {
     subjectProgress: progress[subjectIndex],
     initSubjectProgress: (learnableCount: number) => {
-      console.log(subjectIndex, learnableCount);
       initSubjectProgress(subjectIndex, learnableCount);
     },
     updateLearnableProgress: (
