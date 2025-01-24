@@ -7,11 +7,11 @@ import {
 } from '@mui/material';
 import { BigPicture } from '../../layout/BigPicture';
 import { Subject } from '../../layout/subject/Subject';
-import { Register } from '../../Register';
+import { Register } from '../../memory/Register';
 import { BulletPoints } from '../../layout/BulletPoints';
 import { useLearnableContext } from '../../learnable-provider/LearnableProvider';
 import { useEffect, useState } from 'react';
-import { Byte } from '../../Byte';
+import { Byte } from '../../memory/Byte';
 
 function Learnable0() {
   const { onLearn, isVisible } = useLearnableContext();

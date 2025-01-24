@@ -8,7 +8,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useState, useCallback, useEffect } from 'react';
-import { MemoryCell } from '../../MemoryCell';
+import { MemoryCell } from '../../memory/MemoryCell';
 import {
   CircleOutlined,
   SquareOutlined,

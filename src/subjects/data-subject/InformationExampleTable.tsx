@@ -6,7 +6,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { MemoryCell } from '../../MemoryCell';
+import { MemoryCell } from '../../memory/MemoryCell';
 import {
   RectangleOutlined,
   CircleOutlined,

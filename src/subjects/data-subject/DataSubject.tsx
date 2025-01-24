@@ -14,7 +14,7 @@ import {
   CircleOutlined,
   SquareOutlined,
 } from '@mui/icons-material';
-import { MemoryCell } from '../../MemoryCell';
+import { MemoryCell } from '../../memory/MemoryCell';
 import { Subject } from '../../layout/subject/Subject';
 import { BigPicture } from '../../layout/BigPicture';
 import { DataExampleTable } from './DataExampleTable';
