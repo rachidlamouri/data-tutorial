@@ -20,6 +20,7 @@ import { BigPicture } from '../../layout/BigPicture';
 import { DataExampleTable } from './DataExampleTable';
 import { InformationExampleTable } from './InformationExampleTable';
 import { useLearnableContext } from '../../learnable-provider/LearnableProvider';
+import { BulletPoints } from '../../layout/BulletPoints';
 
 function Analogy() {
   return (
@@ -426,10 +427,16 @@ function Learnable6() {
 
   return (
     <>
-      <Typography>
-        Computer memory is data formed from billions of physical memory cells
-        (bits). We can take any group of bits and assign meaning to it.
-      </Typography>
+      <BulletPoints>
+        <Typography>
+          Computer memory is data formed from billions of physical memory cells
+          (bits)
+        </Typography>
+        <Typography>
+          We can take any group of bits and assign meaning to it (more on this
+          later)
+        </Typography>
+      </BulletPoints>
       <Stack>
         <Stack direction="row">
           <MemoryCell onChange={onMemoryInteract} />

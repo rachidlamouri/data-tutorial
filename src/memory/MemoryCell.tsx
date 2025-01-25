@@ -41,7 +41,7 @@ export function MemoryCell({
   );
 
   const isEnabled = value !== undefined ? value : isInternallyEnabled;
-  const color = isEnabled ? 'primary' : 'action';
+  const color = isEnabled ? 'primary' : 'disabled';
 
   return (
     <>

@@ -1,11 +1,15 @@
 import { useCallback, useMemo, useState } from 'react';
 import { MemoryCell, ReadOnlyMemoryCell } from './MemoryCell';
-import { Stack, useTheme } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 
 type RegisterProps = {
-  onChange?: (value: number) => void;
+  isSigned?: boolean;
+  onChange?: (value: number, bits: boolean[]) => void;
   labels?: Record<number, string>;
   size?: number;
+  label?: string;
+  showBorder?: boolean;
+  value?: number;
 };
 
 type BitState = {
@@ -13,13 +17,20 @@ type BitState = {
   value: boolean;
 };
 
-const computeDecimalValue = (states: BitState[]) => {
-  const bitText = states.map(({ value }) => (value ? '1' : '0')).join('');
+// eslint-disable-next-line react-refresh/only-export-components
+export const computeDecimalValue = (bits: boolean[]) => {
+  const bitText = bits.map((value) => (value ? '1' : '0')).join('');
   const decimalValue = Number.parseInt(bitText, 2);
   return decimalValue;
 };
 
-export function Register({ onChange, labels = {}, size }: RegisterProps) {
+export function Register({
+  onChange,
+  labels = {},
+  size,
+  label,
+  value: controlledValue,
+}: RegisterProps) {
   const theme = useTheme();
   const hideLabels = size !== undefined;
 
@@ -35,6 +46,8 @@ export function Register({ onChange, labels = {}, size }: RegisterProps) {
     return hideLabels ? size : Math.log2(possibleValues.length);
   }, [hideLabels, size, possibleValues]);
 
+  const showBorder = bitCount > 1;
+
   const template = useMemo(() => {
     return Array.from({ length: bitCount }).map((_, index) => index);
   }, [bitCount]);
@@ -46,8 +59,22 @@ export function Register({ onChange, labels = {}, size }: RegisterProps) {
     }));
   }, [template]);
 
-  const [bitStates, setBitStates] = useState(initialValue);
-  const decimalValue = computeDecimalValue(bitStates);
+  const [internalBitStates, setBitStates] = useState(initialValue);
+  const bitStates =
+    controlledValue !== undefined && size !== undefined
+      ? Number(controlledValue)
+          .toString(2)
+          .padStart(size, '0')
+          .split('')
+          .map((character, index) => {
+            return {
+              index,
+              value: character === '1',
+            };
+          })
+      : internalBitStates;
+  const bits = internalBitStates.map(({ value }) => value);
+  const decimalValue = computeDecimalValue(bits);
 
   const setBitState = useCallback(
     (index: number, value: boolean) => {
@@ -62,16 +89,27 @@ export function Register({ onChange, labels = {}, size }: RegisterProps) {
         return previous;
       });
 
+      const newBits = newBitStates.map(({ value }) => value);
       setBitStates(newBitStates);
-      onChange?.(computeDecimalValue(newBitStates));
+      onChange?.(computeDecimalValue(newBits), newBits);
     },
     [bitStates, onChange],
   );
 
   return (
-    <Stack direction="row" alignItems="center" gap={1}>
+    <Stack direction="row" alignItems="center" gap={1} width="fit-content">
       <Stack alignItems="center">
-        <Stack direction="row" alignItems="center">
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            border: 0.5,
+            borderColor: showBorder
+              ? theme.palette.action.disabled
+              : 'transparent',
+            borderRadius: 50,
+          }}
+        >
           {template.map((index) => {
             return (
               <MemoryCell
@@ -84,7 +122,10 @@ export function Register({ onChange, labels = {}, size }: RegisterProps) {
             );
           })}
         </Stack>
-        {!hideLabels && labels !== undefined && labels[decimalValue]}
+        <Typography color="secondary">
+          {!hideLabels && labels !== undefined && labels[decimalValue]}
+          {label !== undefined && label}
+        </Typography>
       </Stack>
       {!hideLabels && (
         <Stack>
@@ -103,7 +144,7 @@ export function Register({ onChange, labels = {}, size }: RegisterProps) {
                   borderRadius: 100,
                   borderColor:
                     nextDecimalValue === decimalValue
-                      ? theme.palette.primary.main
+                      ? theme.palette.secondary.main
                       : 'transparent',
                 }}
               >

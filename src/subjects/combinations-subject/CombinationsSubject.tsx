@@ -105,8 +105,8 @@ function Learnable0() {
                   }));
                 }}
                 labels={{
-                  0: 'mahogany',
-                  1: 'mahogany',
+                  0: 'gray',
+                  1: 'poop',
                 }}
               />
             </TableCell>
@@ -146,7 +146,6 @@ function Learnable1() {
             <TableCell>
               <Register
                 onChange={() => {
-                  console.log('A');
                   setStates((previous) => ({
                     ...previous,
                     food: true,
@@ -168,7 +167,6 @@ function Learnable1() {
             <TableCell>
               <Register
                 onChange={() => {
-                  console.log('b');
                   setStates((previous) => ({
                     ...previous,
                     candy: true,
@@ -190,7 +188,6 @@ function Learnable1() {
             <TableCell>
               <Register
                 onChange={() => {
-                  console.log('c');
                   setStates((previous) => ({
                     ...previous,
                     gender: true,
@@ -212,7 +209,6 @@ function Learnable1() {
             <TableCell>
               <Register
                 onChange={() => {
-                  console.log('d');
                   setStates((previous) => ({
                     ...previous,
                     color: true,

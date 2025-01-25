@@ -6,16 +6,17 @@ import { CanHazCandy } from './CanHazCandy';
 
 type SubjectProps = PropsWithChildren<{
   offset: number;
-  children: ReactNode[];
+  children: ReactNode[] | ReactNode;
 }>;
 
 export function Subject({ offset, children }: SubjectProps) {
-  const learnableCount = children.length;
+  const childList = Array.isArray(children) ? children : [children];
+  const learnableCount = childList.length;
 
   return (
     <SubjectProvider learnableCount={learnableCount}>
       <List>
-        {children.map((child, childIndex) => {
+        {childList.map((child, childIndex) => {
           const offsetIndex = childIndex - offset;
           const learnableIndex =
             offsetIndex -

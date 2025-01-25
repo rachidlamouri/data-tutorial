@@ -59,7 +59,7 @@ export function InformationExampleTable() {
           <TableCell>
             <Typography>
               Bits can be used to represent anything. You can choose what this
-              data represents (more on this in the next subject)
+              data represents (more on this later)
             </Typography>
           </TableCell>
         </TableRow>

@@ -15,7 +15,7 @@ export function Learnable({ index, children }: LearnableProps) {
           <Box>
             <Checkmark />
           </Box>
-          <Stack>{children}</Stack>
+          <Stack gap={0.5}>{children}</Stack>
         </Stack>
       </ListItem>
     </LearnableProvider>
