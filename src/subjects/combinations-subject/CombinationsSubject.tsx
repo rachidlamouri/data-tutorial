@@ -30,9 +30,11 @@ function Learnable0() {
 
   return (
     <>
-      <Typography>
-        A single bit can only hold a tiny piece of information
-      </Typography>
+      <BulletPoints>
+        <Typography>
+          A single bit can only represent a tiny piece of information
+        </Typography>
+      </BulletPoints>
       <Table>
         <TableBody>
           <TableRow>
@@ -134,9 +136,11 @@ function Learnable1() {
 
   return (
     <>
-      <Typography>
-        Instead of looking at just one bit, lets look at two bits together
-      </Typography>
+      <BulletPoints>
+        <Typography>
+          Instead of looking at just one bit, lets look at two bits together
+        </Typography>
+      </BulletPoints>
       <Table>
         <TableBody>
           <TableRow>
@@ -241,7 +245,9 @@ function Learnable2() {
 
   return (
     <>
-      <Typography>Three bits has even moooooore combinations</Typography>
+      <BulletPoints>
+        <Typography>Three bits has even moooooore combinations</Typography>
+      </BulletPoints>
       <Register
         onChange={() => {
           setInteractCount((previous) => previous + 1);
@@ -302,7 +308,9 @@ function Learnable4() {
 
   return (
     <>
-      <Typography>Four bits is called a "nibble" lol</Typography>
+      <BulletPoints>
+        <Typography>Four bits is called a "nibble" lol</Typography>
+      </BulletPoints>
       <Register
         onChange={() => {
           setInteractCount((previous) => previous + 1);

@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
-import { MemoryCell, ReadOnlyMemoryCell } from './MemoryCell';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { MemoryCell, MemoryCellProps, ReadOnlyMemoryCell } from './MemoryCell';
 import { Stack, Typography, useTheme } from '@mui/material';
 
 type RegisterProps = {
@@ -7,9 +7,11 @@ type RegisterProps = {
   onChange?: (value: number, bits: boolean[]) => void;
   labels?: Record<number, string>;
   size?: number;
-  label?: string;
+  label?: ReactNode;
   showBorder?: boolean;
   value?: number;
+  initialValue?: number;
+  disabled?: boolean;
 };
 
 type BitState = {
@@ -30,6 +32,8 @@ export function Register({
   size,
   label,
   value: controlledValue,
+  initialValue: controlledInitialValue,
+  disabled,
 }: RegisterProps) {
   const theme = useTheme();
   const hideLabels = size !== undefined;
@@ -53,11 +57,24 @@ export function Register({
   }, [bitCount]);
 
   const initialValue = useMemo<BitState[]>(() => {
+    if (controlledInitialValue !== undefined && size !== undefined) {
+      return Number(controlledInitialValue)
+        .toString(2)
+        .padStart(size, '0')
+        .split('')
+        .map((character, index) => {
+          return {
+            index,
+            value: character === '1',
+          };
+        });
+    }
+
     return template.map((index) => ({
       index,
       value: false,
     }));
-  }, [template]);
+  }, [size, controlledInitialValue, template]);
 
   const [internalBitStates, setBitStates] = useState(initialValue);
   const bitStates =
@@ -111,21 +128,27 @@ export function Register({
           }}
         >
           {template.map((index) => {
-            return (
-              <MemoryCell
-                onChange={(value) => {
-                  setBitState(index, value);
-                }}
-                value={bitStates[index].value}
-                key={index}
-              />
-            );
+            const cellProps: MemoryCellProps = {
+              disabled,
+              onChange: (value) => {
+                setBitState(index, value);
+              },
+              value: bitStates[index].value,
+            };
+
+            const Component = disabled ? ReadOnlyMemoryCell : MemoryCell;
+
+            return <Component {...cellProps} key={index} />;
           })}
         </Stack>
         <Typography color="secondary">
           {!hideLabels && labels !== undefined && labels[decimalValue]}
-          {label !== undefined && label}
         </Typography>
+        {label !== undefined && typeof label === 'string' ? (
+          <Typography color="secondary">{label}</Typography>
+        ) : (
+          label
+        )}
       </Stack>
       {!hideLabels && (
         <Stack>

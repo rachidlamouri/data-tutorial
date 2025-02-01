@@ -28,7 +28,7 @@ function Analogy() {
       <AnalogyIcon sx={{ fontSize: 80 }} />
       <Stack>
         <Stack direction="row" alignItems="center" gap={1}>
-          <HubIcon />
+          <HubIcon color="info" fontSize="small" />
           <Typography>
             <Typography component="span" fontWeight="bold" noWrap>
               Data
@@ -37,7 +37,7 @@ function Analogy() {
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center" gap={1}>
-          <ForestIcon />
+          <ForestIcon color="info" fontSize="small" />
           <Typography>
             <Typography component="span" fontWeight="bold" noWrap>
               Information
@@ -46,7 +46,7 @@ function Analogy() {
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center" gap={1}>
-          <CircleIcon />
+          <CircleIcon color="info" fontSize="small" />
           <Typography>
             <Typography component="span" fontWeight="bold" noWrap>
               Memory Cell
@@ -65,13 +65,15 @@ function Learnable0() {
 
   return (
     <>
-      <Typography>
-        A{' '}
-        <Typography component="span" fontWeight="bold" noWrap>
-          memory cell{' '}
+      <BulletPoints>
+        <Typography>
+          A{' '}
+          <Typography component="span" fontWeight="bold" noWrap>
+            memory cell{' '}
+          </Typography>
+          is something that can exist in one of two ways
         </Typography>
-        is something that can exist in one of two ways
-      </Typography>
+      </BulletPoints>
       <List>
         <ListItem>
           <Stack direction="row" alignItems="center">
@@ -82,8 +84,12 @@ function Learnable0() {
                 onLearnChange(true);
               }}
             />
-            <Typography variant="caption">
-              (this circle is interactive!)
+            <Typography>
+              (
+              <Typography variant="caption" color="info">
+                this circle is interactive!
+              </Typography>
+              )
             </Typography>
           </Stack>
         </ListItem>
@@ -109,7 +115,9 @@ function Learnable1() {
 
   return (
     <>
-      <Typography>Regardless of physical medium</Typography>
+      <BulletPoints>
+        <Typography>Regardless of physical medium</Typography>
+      </BulletPoints>
       <List>
         <ListItem>
           <MemoryCell
@@ -256,7 +264,9 @@ function Learnable2() {
 
   return (
     <>
-      <Typography>Regardless of abstract representation</Typography>
+      <BulletPoints>
+        <Typography>Regardless of abstract representation</Typography>
+      </BulletPoints>
       <List>
         <ListItem>
           <MemoryCell
@@ -359,17 +369,19 @@ function Learnable3() {
 
   return (
     <>
-      <Typography>
-        The term "
-        <Typography component="span" fontWeight="bold">
-          bit
+      <BulletPoints>
+        <Typography>
+          The term "
+          <Typography component="span" fontWeight="bold">
+            bit
+          </Typography>
+          " can be used interchangeably with "memory cell"{' '}
+          <Typography component="span" fontWeight="bold">
+            without
+          </Typography>{' '}
+          carrying the connotation of boring binary math
         </Typography>
-        " can be used interchangeably with "memory cell"{' '}
-        <Typography component="span" fontWeight="bold">
-          without
-        </Typography>{' '}
-        carrying the connotation of boring binary math
-      </Typography>
+      </BulletPoints>
       <List>
         <ListItem>
           <MemoryCell
@@ -394,12 +406,14 @@ function Learnable3() {
 function Learnable4() {
   return (
     <>
-      <Typography>
-        <Typography component="span" fontWeight="bold">
-          Data
-        </Typography>{' '}
-        is a sequence of things. The sequence doesn't have to mean anything
-      </Typography>
+      <BulletPoints>
+        <Typography>
+          <Typography component="span" fontWeight="bold">
+            Data
+          </Typography>{' '}
+          is a sequence of things. The sequence doesn't have to mean anything
+        </Typography>
+      </BulletPoints>
       <DataExampleTable />
     </>
   );
@@ -408,12 +422,14 @@ function Learnable4() {
 function Learnable5() {
   return (
     <>
-      <Typography>
-        <Typography component="span" fontWeight="bold">
-          Information
-        </Typography>{' '}
-        is data with meaning
-      </Typography>
+      <BulletPoints>
+        <Typography>
+          <Typography component="span" fontWeight="bold">
+            Information
+          </Typography>{' '}
+          is data with meaning
+        </Typography>
+      </BulletPoints>
       <InformationExampleTable />
     </>
   );

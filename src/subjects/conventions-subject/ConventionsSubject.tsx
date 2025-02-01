@@ -188,6 +188,42 @@ function Learnable3() {
   );
 }
 
+function Learnable4() {
+  const [text, setText] = useState(' Hello  ');
+
+  return (
+    <>
+      <BulletPoints>
+        <Typography>
+          Text is just a sequence of bytes where each byte is a character
+        </Typography>
+      </BulletPoints>
+      <Stack gap={1}>
+        {text.split('').map((character, index) => {
+          return (
+            <Byte
+              onChange={(value) => {
+                const newTextList = text.split('');
+                newTextList[index] = String.fromCharCode(value);
+                const newText = newTextList.join('');
+                setText(newText);
+              }}
+              label={character}
+            />
+          );
+        })}
+      </Stack>
+      <BulletPoints>
+        <Typography>
+          {
+            'Think about how many bytes it takes to represent this sentence (129 bytes including this part in parenthesis, which is 1032 bits)'
+          }
+        </Typography>
+      </BulletPoints>
+    </>
+  );
+}
+
 export function ConventionsSubject() {
   return (
     <Subject offset={1}>
@@ -200,6 +236,7 @@ export function ConventionsSubject() {
       <Learnable1 />
       <Learnable2 />
       <Learnable3 />
+      <Learnable4 />
     </Subject>
   );
 }
