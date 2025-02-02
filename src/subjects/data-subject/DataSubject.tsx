@@ -13,6 +13,7 @@ import {
   Hub as HubIcon,
   CircleOutlined,
   SquareOutlined,
+  InfoOutlined,
 } from '@mui/icons-material';
 import { MemoryCell } from '../../memory/MemoryCell';
 import { Subject } from '../../layout/subject/Subject';
@@ -21,6 +22,7 @@ import { DataExampleTable } from './DataExampleTable';
 import { InformationExampleTable } from './InformationExampleTable';
 import { useLearnableContext } from '../../learnable-provider/LearnableProvider';
 import { BulletPoints } from '../../layout/BulletPoints';
+import { Underline } from '../../typography/Underline';
 
 function Analogy() {
   return (
@@ -30,28 +32,19 @@ function Analogy() {
         <Stack direction="row" alignItems="center" gap={1}>
           <HubIcon color="info" fontSize="small" />
           <Typography>
-            <Typography component="span" fontWeight="bold" noWrap>
-              Data
-            </Typography>
-            : atoms and molecules
+            <Underline>Data</Underline>: atoms and molecules
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center" gap={1}>
           <ForestIcon color="info" fontSize="small" />
           <Typography>
-            <Typography component="span" fontWeight="bold" noWrap>
-              Information
-            </Typography>
-            : identifiable things (like trees)
+            <Underline>Information</Underline>: identifiable things (like trees)
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center" gap={1}>
           <CircleIcon color="info" fontSize="small" />
           <Typography>
-            <Typography component="span" fontWeight="bold" noWrap>
-              Memory Cell
-            </Typography>
-            : subatomic particle
+            <Underline>Memory Cell</Underline>: subatomic particle
           </Typography>
         </Stack>
       </Stack>
@@ -60,38 +53,41 @@ function Analogy() {
 }
 
 function Learnable0() {
-  const { updateVisiblity: onVisibleChange, updateLearned: onLearnChange } =
-    useLearnableContext();
+  const { onLearn } = useLearnableContext();
+
+  const [hasBeenOn, setHasBeenOn] = useState(false);
+  const [hasBeenOff, setHasBeenOff] = useState(false);
+
+  useEffect(() => {
+    if (hasBeenOn && hasBeenOff) {
+      onLearn();
+    }
+  }, [hasBeenOff, hasBeenOn, onLearn]);
 
   return (
     <>
       <BulletPoints>
         <Typography>
-          A{' '}
-          <Typography component="span" fontWeight="bold" noWrap>
-            memory cell{' '}
-          </Typography>
+          A <Underline>memory cell</Underline>
           is something that can exist in one of two ways
         </Typography>
+        <Stack direction="row" gap={1} alignItems="center">
+          <InfoOutlined color="info" fontSize="small" />
+          <Typography>The circle below is interactive!</Typography>
+        </Stack>
       </BulletPoints>
       <List>
         <ListItem>
-          <Stack direction="row" alignItems="center">
-            <MemoryCell
-              IconComponent={CircleIcon}
-              onChange={() => {
-                onVisibleChange(true);
-                onLearnChange(true);
-              }}
-            />
-            <Typography>
-              (
-              <Typography variant="caption" color="info">
-                this circle is interactive!
-              </Typography>
-              )
-            </Typography>
-          </Stack>
+          <MemoryCell
+            IconComponent={CircleIcon}
+            onChange={(value) => {
+              if (value) {
+                setHasBeenOn(true);
+              } else {
+                setHasBeenOff(true);
+              }
+            }}
+          />
         </ListItem>
       </List>
     </>
@@ -343,19 +339,9 @@ function Learnable2() {
             }}
           </MemoryCell>
           <Typography noWrap>
-            A zero or one: a{' '}
-            <Typography component="span" fontWeight="bold">
-              bi
-            </Typography>
+            A zero or one: a <Underline>bi</Underline>
             nary digi
-            <Typography component="span" fontWeight="bold">
-              t
-            </Typography>{' '}
-            (a{' '}
-            <Typography component="span" fontWeight="bold">
-              bit
-            </Typography>
-            )
+            <Underline>t</Underline> (a <Underline>bit</Underline>)
           </Typography>
         </ListItem>
       </List>
@@ -371,15 +357,9 @@ function Learnable3() {
     <>
       <BulletPoints>
         <Typography>
-          The term "
-          <Typography component="span" fontWeight="bold">
-            bit
-          </Typography>
-          " can be used interchangeably with "memory cell"{' '}
-          <Typography component="span" fontWeight="bold">
-            without
-          </Typography>{' '}
-          carrying the connotation of boring binary math
+          The term "<Underline>bit</Underline>" can be used interchangeably with
+          "memory cell" <Underline>without</Underline> carrying the connotation
+          of boring binary math
         </Typography>
       </BulletPoints>
       <List>
@@ -408,10 +388,8 @@ function Learnable4() {
     <>
       <BulletPoints>
         <Typography>
-          <Typography component="span" fontWeight="bold">
-            Data
-          </Typography>{' '}
-          is a sequence of things. The sequence doesn't have to mean anything
+          <Underline>Data</Underline> is a sequence of things. The sequence
+          doesn't have to mean anything
         </Typography>
       </BulletPoints>
       <DataExampleTable />
@@ -424,10 +402,7 @@ function Learnable5() {
     <>
       <BulletPoints>
         <Typography>
-          <Typography component="span" fontWeight="bold">
-            Information
-          </Typography>{' '}
-          is data with meaning
+          <Underline>Information</Underline> is data with meaning
         </Typography>
       </BulletPoints>
       <InformationExampleTable />

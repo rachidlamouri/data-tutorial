@@ -2,7 +2,7 @@ import { BigPicture } from '../../layout/BigPicture';
 import { BulletPoints } from '../../layout/BulletPoints';
 import { Input, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
-import { Byte } from '../../memory/Byte';
+import { OldByte } from '../../memory/Byte';
 import { Subject } from '../../layout/subject/Subject';
 
 function Learnable0() {
@@ -63,8 +63,16 @@ function Learnable0() {
           }}
         />
         <Stack direction="row" gap={1}>
-          <Byte disabled value={secondValue} label={formatLabel(secondValue)} />
-          <Byte disabled value={firstValue} label={formatLabel(firstValue)} />
+          <OldByte
+            disabled
+            value={secondValue}
+            label={formatLabel(secondValue)}
+          />
+          <OldByte
+            disabled
+            value={firstValue}
+            label={formatLabel(firstValue)}
+          />
         </Stack>
       </Stack>
     </>

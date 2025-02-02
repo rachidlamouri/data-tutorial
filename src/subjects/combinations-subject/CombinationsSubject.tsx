@@ -12,6 +12,7 @@ import { BulletPoints } from '../../layout/BulletPoints';
 import { useLearnableContext } from '../../learnable-provider/LearnableProvider';
 import { useEffect, useState } from 'react';
 import { Byte } from '../../memory/Byte';
+import { Underline } from '../../typography/Underline';
 
 function Learnable0() {
   const { onLearn, isVisible } = useLearnableContext();
@@ -283,7 +284,8 @@ function Learnable3() {
         <Typography>Every bit doubles the number of possibilites! </Typography>
         <Typography>
           Some smarty pants people were like "8 bits is a nice number. Let's
-          call it a 'byte'!"
+          call it a <Underline>byte</Underline>
+          !"
         </Typography>
         <Typography>A byte has 256 different combinations!</Typography>
       </BulletPoints>
@@ -309,7 +311,9 @@ function Learnable4() {
   return (
     <>
       <BulletPoints>
-        <Typography>Four bits is called a "nibble" lol</Typography>
+        <Typography>
+          Four bits is called a <Underline>nibble</Underline> lol
+        </Typography>
       </BulletPoints>
       <Register
         onChange={() => {

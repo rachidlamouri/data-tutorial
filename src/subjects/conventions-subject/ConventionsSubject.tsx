@@ -1,71 +1,114 @@
 import { BigPicture } from '../../layout/BigPicture';
 import { BulletPoints } from '../../layout/BulletPoints';
 import { Input, Link, Stack, Typography, useTheme } from '@mui/material';
-import { Byte } from '../../memory/Byte';
-import { useState } from 'react';
+import { OldByte, Byte, ByteHeader } from '../../memory/Byte';
+import { useMemo, useState } from 'react';
 import { Subject } from '../../layout/subject/Subject';
-import { computeDecimalValue } from '../../memory/Register';
+import {
+  bitsToUnsignedDecimal,
+  characterToDecimal,
+  unsignedDecimalToBits,
+  unsignedDecimalToByte,
+} from '../../memory/bitUtils';
+import { InfoOutlined } from '@mui/icons-material';
+import { InfoText } from '../../typography/InfoText';
+import { Underline } from '../../typography/Underline';
 
 function Learnable0() {
-  const [value, setValue] = useState(0);
-
   return (
     <>
       <BulletPoints>
         <Typography>
-          Storing a positive integer in a byte is super simple
+          Encoding a positive <Underline>int</Underline>
+          eger in a byte is super simple
         </Typography>
         <Typography>
-          We just map combinations of bits to the numbers 0 to 255
+          We just map combinations of bits to the numbers <InfoText>0</InfoText>{' '}
+          to <InfoText>255</InfoText>
         </Typography>
+        <Stack direction="row" gap={1} alignItems="center">
+          <InfoOutlined color="info" fontSize="small" />
+          <Typography>
+            You can interact with the memory cell <InfoText>and</InfoText>{' '}
+            number field below
+          </Typography>
+        </Stack>
       </BulletPoints>
-      <Byte onChange={setValue} label={`${value}`} />
+      <ByteHeader hideCharacter readonlyUIntValue="Int" />
+      <Byte hideCharacter />
     </>
   );
 }
 
 function Learnable1() {
-  const [bits, setBits] = useState<boolean[]>(
-    Array.from({ length: 8 }).map(() => false),
-  );
-  const [firstBit, ...otherBits] = bits;
-  const negativePart = firstBit ? -128 : 0;
-  const positivePart = computeDecimalValue(otherBits);
-  const value = positivePart + negativePart;
-
   return (
     <>
       <BulletPoints>
         <Typography>
-          For positive and negative integers we use the range -128 to 127
+          To support negative integers we need to indicate the{' '}
+          <Underline>sign</Underline> (ie. <Underline>+/-</Underline>)
         </Typography>
-        <Typography>This is called a signed integer</Typography>
+        <Typography>
+          An <Underline>unsigned</Underline> integer byte represents the range{' '}
+          <InfoText>0</InfoText> to <InfoText>255</InfoText>
+        </Typography>
+        <Typography>
+          A <Underline>signed</Underline> integer byte represents the range{' '}
+          <InfoText>-128</InfoText> to <InfoText>127</InfoText>
+        </Typography>
       </BulletPoints>
-      <Byte
-        onChange={(_value, nextBits) => {
-          setBits(nextBits);
-        }}
-        label={`${value}`}
-      />
+      <ByteHeader showSignedInt hideCharacter />
+      <Byte showSignedInt hideCharacter initialUIntValue={128} />
       <BulletPoints>
-        <Typography>All bits set to off represents 0</Typography>
-        <Typography>If only the left bit is on it's -128</Typography>
-        <Typography>If all bits, but the left are on it's 127</Typography>
-        <Typography>If all bits are on it's -1</Typography>
+        <Typography>
+          If only the left bit is on, then its signed value is{' '}
+          <InfoText>-128</InfoText>
+        </Typography>
+        <Typography>
+          All bits set to off represents <InfoText>0</InfoText>{' '}
+        </Typography>
+        <Typography>
+          If all bits, but the left are on it's <InfoText>127</InfoText>{' '}
+        </Typography>
+        <Typography>
+          If all bits are on it's <InfoText>-1</InfoText>{' '}
+        </Typography>
       </BulletPoints>
     </>
   );
 }
 
 function Learnable2() {
+  const MAX_VALUE = 4_294_967_295;
+  const MAX_VALUE_LENGTH = MAX_VALUE.toString().length;
   const theme = useTheme();
-  const [allBytes, setAllBits] = useState(
-    Array.from({ length: 4 }).map(() => {
-      return Array.from({ length: 8 }).map(() => false);
-    }),
-  );
 
-  const value = computeDecimalValue(allBytes.flat());
+  const init = useMemo(() => {
+    const bytes = [
+      unsignedDecimalToByte(0),
+      unsignedDecimalToByte(0),
+      unsignedDecimalToByte(0),
+      unsignedDecimalToByte(0),
+    ] as const;
+
+    return {
+      bytes,
+      unsignedDecimal: bitsToUnsignedDecimal(bytes.flat()),
+    };
+  }, []);
+
+  const [bytes, setBytes] = useState(init.bytes);
+
+  const [unsignedNumberInput, setUnsignedNumberInput] = useState(
+    init.unsignedDecimal.toString(),
+  );
+  const [isUnsignedInputValid, setIsUnsignedInputValid] = useState(true);
+
+  const onByteChange = (newBytes: typeof bytes) => {
+    setBytes(newBytes);
+    setUnsignedNumberInput(bitsToUnsignedDecimal(newBytes.flat()).toString());
+    setIsUnsignedInputValid(true);
+  };
 
   return (
     <>
@@ -74,7 +117,11 @@ function Learnable2() {
           Want to store a bigger number? Just group some bytes!
         </Typography>
         <Typography>
-          This is a four byte unsigned (ie. positive) integer
+          This is a four byte unsigned integer (ie. a 32 bit integer)
+        </Typography>
+        <Typography>
+          Its maxiumum value is{' '}
+          <InfoText>{MAX_VALUE.toLocaleString()}</InfoText>{' '}
         </Typography>
       </BulletPoints>
       <Stack alignItems="center">
@@ -89,87 +136,90 @@ function Learnable2() {
           alignItems="center"
         >
           <Byte
-            onChange={(_value, bits) => {
-              setAllBits([bits, ...allBytes.slice(1, 4)]);
+            hideUnsignedInt
+            hideCharacter
+            onChange={({ bits }) => {
+              onByteChange([bits, bytes[1], bytes[2], bytes[3]]);
             }}
+            value={bytes[0]}
           />
           <Byte
-            onChange={(_value, bits) => {
-              setAllBits([
-                ...allBytes.slice(0, 1),
-                bits,
-                ...allBytes.slice(2, 4),
-              ]);
+            hideUnsignedInt
+            hideCharacter
+            onChange={({ bits }) => {
+              onByteChange([bytes[0], bits, bytes[2], bytes[3]]);
             }}
+            value={bytes[1]}
           />
           <Byte
-            onChange={(_value, bits) => {
-              setAllBits([
-                ...allBytes.slice(0, 2),
-                bits,
-                ...allBytes.slice(3, 4),
-              ]);
+            hideUnsignedInt
+            hideCharacter
+            onChange={({ bits }) => {
+              onByteChange([bytes[0], bytes[1], bits, bytes[3]]);
             }}
+            value={bytes[2]}
           />
           <Byte
-            onChange={(_value, bits) => {
-              setAllBits([...allBytes.slice(0, 3), bits]);
+            hideUnsignedInt
+            hideCharacter
+            onChange={({ bits }) => {
+              onByteChange([bytes[0], bytes[1], bytes[2], bits]);
             }}
+            value={bytes[3]}
           />
         </Stack>
-        <Typography color="secondary">{value}</Typography>
+        <Input
+          error={!isUnsignedInputValid}
+          onChange={(event) => {
+            const textValue = event.target.value.slice(0, MAX_VALUE_LENGTH);
+            const isUnsignedInteger = /[1-9]*[0-9]/.test(textValue);
+            const unsignedDecimal = Number.parseInt(textValue, 10);
+
+            setUnsignedNumberInput(textValue);
+
+            if (
+              Number.isNaN(unsignedDecimal) ||
+              !isUnsignedInteger ||
+              unsignedDecimal < 0 ||
+              unsignedDecimal > MAX_VALUE
+            ) {
+              setIsUnsignedInputValid(false);
+              return;
+            }
+
+            const bits = unsignedDecimalToBits(unsignedDecimal, 32);
+            onByteChange([
+              bits.slice(0, 8),
+              bits.slice(8, 16),
+              bits.slice(16, 24),
+              bits.slice(24, 32),
+            ]);
+          }}
+          value={unsignedNumberInput}
+          sx={{
+            width: MAX_VALUE_LENGTH * 10,
+            color: theme.palette.warning.main,
+          }}
+          inputProps={{
+            style: {
+              textAlign: 'center',
+            },
+          }}
+        />
       </Stack>
     </>
   );
 }
 
 function Learnable3() {
-  const [isByteControlled, setIsByteControlled] = useState(true);
-  const [character, setCharacter] = useState('A');
-  const [decimalValue, setDecimalValue] = useState('A'.charCodeAt(0));
-
   return (
     <>
       <BulletPoints>
-        <Typography>Want to store text?</Typography>
+        <Typography>Want to encode text?</Typography>
         <Typography>Let's start with a single character</Typography>
-        <Typography>
-          You can interact with the byte and the character input below
-        </Typography>
       </BulletPoints>
-      <Stack alignItems="center">
-        <Byte
-          onChange={(value) => {
-            setIsByteControlled(false);
-            setDecimalValue(value);
-            setCharacter(String.fromCharCode(value));
-          }}
-          label={`${decimalValue}`}
-          value={isByteControlled ? decimalValue : undefined}
-        />
-        <Input
-          onChange={(event) => {
-            const eventValue = event.target.value;
-            const characters = eventValue.split('');
-
-            const nextCharacter = characters[characters.length - 1];
-            if (nextCharacter === undefined) {
-              return;
-            }
-
-            setIsByteControlled(true);
-            setDecimalValue(nextCharacter.charCodeAt(0));
-            setCharacter(nextCharacter);
-          }}
-          value={character}
-          sx={{
-            width: 30,
-          }}
-          inputProps={{
-            style: { textAlign: 'center' },
-          }}
-        />
-      </Stack>
+      <ByteHeader />
+      <Byte initialUIntValue={characterToDecimal('A')} />
       <BulletPoints>
         <Typography>
           You can find all character codes here:{' '}
@@ -201,7 +251,7 @@ function Learnable4() {
       <Stack gap={1}>
         {text.split('').map((character, index) => {
           return (
-            <Byte
+            <OldByte
               onChange={(value) => {
                 const newTextList = text.split('');
                 newTextList[index] = String.fromCharCode(value);
@@ -229,7 +279,8 @@ export function ConventionsSubject() {
     <Subject offset={1}>
       <BigPicture
         bulletPoints={[
-          'What are the standards for storing information with bits?',
+          'An encoding is a standard for mapping bits to information',
+          'What are some widely used encodings?',
         ]}
       />
       <Learnable0 />
