@@ -1,12 +1,11 @@
 import { BigPicture } from '../../layout/BigPicture';
 import { BulletPoints } from '../../layout/BulletPoints';
-import { Input, Link, Stack, Typography, useTheme } from '@mui/material';
-import { OldByte, Byte, ByteHeader } from '../../memory/Byte';
+import { Input, Stack, Typography, useTheme } from '@mui/material';
+import { Byte, ByteHeader } from '../../memory/Byte';
 import { useMemo, useState } from 'react';
 import { Subject } from '../../layout/subject/Subject';
 import {
   bitsToUnsignedDecimal,
-  characterToDecimal,
   unsignedDecimalToBits,
   unsignedDecimalToByte,
 } from '../../memory/bitUtils';
@@ -211,83 +210,13 @@ function Learnable2() {
   );
 }
 
-function Learnable3() {
-  return (
-    <>
-      <BulletPoints>
-        <Typography>Want to encode text?</Typography>
-        <Typography>Let's start with a single character</Typography>
-      </BulletPoints>
-      <ByteHeader />
-      <Byte initialUIntValue={characterToDecimal('A')} />
-      <BulletPoints>
-        <Typography>
-          You can find all character codes here:{' '}
-          <Link href="https://www.ascii-code.com/">ASCII</Link>
-        </Typography>
-        <Typography>
-          We actually use{' '}
-          <Link href="https://www.fileformat.info/info/charset/UTF-8/list.htm">
-            Unicode Transformation Format - 8-bit (UTF-8)
-          </Link>{' '}
-          for text, but that's more complicated
-        </Typography>
-        <Typography>The first 128 UTF-8 codes are the ASCII codes</Typography>
-      </BulletPoints>
-    </>
-  );
-}
-
-function Learnable4() {
-  const [text, setText] = useState(' Hello  ');
-
-  return (
-    <>
-      <BulletPoints>
-        <Typography>
-          Text is just a sequence of bytes where each byte is a character
-        </Typography>
-      </BulletPoints>
-      <Stack gap={1}>
-        {text.split('').map((character, index) => {
-          return (
-            <OldByte
-              onChange={(value) => {
-                const newTextList = text.split('');
-                newTextList[index] = String.fromCharCode(value);
-                const newText = newTextList.join('');
-                setText(newText);
-              }}
-              label={character}
-            />
-          );
-        })}
-      </Stack>
-      <BulletPoints>
-        <Typography>
-          {
-            'Think about how many bytes it takes to represent this sentence (129 bytes including this part in parenthesis, which is 1032 bits)'
-          }
-        </Typography>
-      </BulletPoints>
-    </>
-  );
-}
-
-export function ConventionsSubject() {
+export function NumberEncodingsSubject() {
   return (
     <Subject offset={1}>
-      <BigPicture
-        bulletPoints={[
-          'An encoding is a standard for mapping bits to information',
-          'What are some widely used encodings?',
-        ]}
-      />
+      <BigPicture bulletPoints={['What are some standard number encodings?']} />
       <Learnable0 />
       <Learnable1 />
       <Learnable2 />
-      <Learnable3 />
-      <Learnable4 />
     </Subject>
   );
 }

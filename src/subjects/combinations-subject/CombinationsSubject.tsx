@@ -13,6 +13,7 @@ import { useLearnableContext } from '../../learnable-provider/LearnableProvider'
 import { useEffect, useState } from 'react';
 import { Byte } from '../../memory/Byte';
 import { Underline } from '../../typography/Underline';
+import { InfoText } from '../../typography/InfoText';
 
 function Learnable0() {
   const { onLearn, isVisible } = useLearnableContext();
@@ -287,9 +288,14 @@ function Learnable3() {
           call it a <Underline>byte</Underline>
           !"
         </Typography>
-        <Typography>A byte has 256 different combinations!</Typography>
+        <Typography>
+          A <Underline>byte</Underline> has <InfoText>256</InfoText> different
+          combinations!
+        </Typography>
       </BulletPoints>
       <Byte
+        hideUnsignedInt
+        hideCharacter
         onChange={() => {
           setInteractCount((previous) => previous + 1);
         }}
