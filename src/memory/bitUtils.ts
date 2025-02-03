@@ -58,3 +58,9 @@ export const characterToByte = (character: string) => {
   const bits = unsignedDecimalToByte(unsignedDecimalValue);
   return bits;
 };
+
+export const byteToCharacter = (bits: boolean[]) => {
+  const unsignedDecimalValue = bitsToUnsignedDecimal(bits);
+  const character = unsignedDecimalToCharacter(unsignedDecimalValue);
+  return character;
+};

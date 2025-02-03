@@ -1,10 +1,10 @@
 import { BigPicture } from '../../layout/BigPicture';
 import { BulletPoints } from '../../layout/BulletPoints';
-import { Link, Stack, Typography } from '@mui/material';
-import { OldByte, Byte, ByteHeader } from '../../memory/Byte';
+import { Link, Stack, TextField, Typography, useTheme } from '@mui/material';
+import { Byte, ByteHeader } from '../../memory/Byte';
 import { useState } from 'react';
 import { Subject } from '../../layout/subject/Subject';
-import { characterToDecimal } from '../../memory/bitUtils';
+import { characterToByte, characterToDecimal } from '../../memory/bitUtils';
 import { Register } from '../../memory/Register';
 import { InfoText } from '../../typography/InfoText';
 import { Underline } from '../../typography/Underline';
@@ -44,9 +44,11 @@ function Learnable1() {
         <Typography>We'll learn why later</Typography>
       </BulletPoints>{' '}
       <NestedInfo>
-        <ByteHeader />
-        <Byte initialUIntValue={5} />
-        <Byte initialUIntValue={characterToDecimal('5')} />
+        <Stack gap={1}>
+          <ByteHeader />
+          <Byte initialUIntValue={5} />
+          <Byte initialUIntValue={characterToDecimal('5')} />
+        </Stack>
       </NestedInfo>
     </>
   );
@@ -89,9 +91,10 @@ function Learnable2() {
   );
 }
 
-// TODO: make a text field mapped to a variable number of bytes
 function Learnable3() {
-  const [text, setText] = useState(' Hello  ');
+  const theme = useTheme();
+  const [text, setText] = useState('Edit me!');
+  const characters = text.split('');
 
   return (
     <>
@@ -101,21 +104,51 @@ function Learnable3() {
           encode text!
         </Typography>
       </BulletPoints>
-      <Stack gap={1}>
-        {text.split('').map((character, index) => {
-          return (
-            <OldByte
-              onChange={(value) => {
-                const newTextList = text.split('');
-                newTextList[index] = String.fromCharCode(value);
-                const newText = newTextList.join('');
-                setText(newText);
-              }}
-              label={character}
-            />
-          );
-        })}
-      </Stack>
+      <NestedInfo>
+        <Stack gap={1}>
+          <TextField
+            onChange={(event) => {
+              const eventValue = event.target.value;
+              setText(eventValue);
+            }}
+            value={text}
+          />
+          <Stack
+            gap={1}
+            width="fit-content"
+            sx={{
+              border: 0.5,
+              borderColor: theme.palette.action.disabled,
+              borderRadius: 5,
+              padding: 2,
+            }}
+          >
+            {characters.map((renderedCharacter, renderedIndex) => {
+              return (
+                <Byte
+                  hideUnsignedInt
+                  key={renderedIndex}
+                  value={characterToByte(renderedCharacter)}
+                  onChange={(event) => {
+                    const nextCharacters = characters.map(
+                      (oldCharacter, oldIndex) => {
+                        if (oldIndex === renderedIndex) {
+                          return event.character;
+                        }
+
+                        return oldCharacter;
+                      },
+                    );
+
+                    const nextText = nextCharacters.join('');
+                    setText(nextText);
+                  }}
+                />
+              );
+            })}
+          </Stack>
+        </Stack>
+      </NestedInfo>
       <BulletPoints>
         <Typography>
           {

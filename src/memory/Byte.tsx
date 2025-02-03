@@ -4,6 +4,7 @@ import { Input, Stack, useTheme } from '@mui/material';
 import { MemoryCell } from './MemoryCell';
 import {
   bitsToUnsignedDecimal,
+  byteToCharacter,
   byteToSignedDecimal,
   characterToByte,
   signedDecimalToByte,
@@ -86,6 +87,8 @@ export function Byte({
   const [isSignedInputValid, setIsSignedInputValid] = useState(true);
 
   const [character, setCharacter] = useState(init.character);
+  const renderedCharacter =
+    value !== undefined ? byteToCharacter(value) : character;
 
   const onBitsChange = (newBits: boolean[]) => {
     const unsignedDecimal = bitsToUnsignedDecimal(newBits);
@@ -222,7 +225,7 @@ export function Byte({
 
             onBitsChange(characterToByte(nextCharacter));
           }}
-          value={readonlyCharValue ?? character}
+          value={readonlyCharValue ?? renderedCharacter}
           sx={{
             width: 40,
           }}
