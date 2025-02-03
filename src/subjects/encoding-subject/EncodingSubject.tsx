@@ -5,6 +5,7 @@ import { BulletPoints } from '../../layout/BulletPoints';
 import { useLearnableContext } from '../../learnable-provider/LearnableProvider';
 import { Register } from '../../memory/Register';
 import { Underline } from '../../typography/Underline';
+import { NestedInfo } from '../../layout/learnable/NestedInfo';
 
 function Learnable0() {
   const { onLearn } = useLearnableContext();
@@ -20,15 +21,18 @@ function Learnable0() {
           The bit below <Underline>encodes</Underline> the owner of a tent
         </Typography>
       </BulletPoints>
-      <Register
-        onChange={() => {
-          onLearn();
-        }}
-        labels={{
-          0: 'Pixel',
-          1: 'Noel',
-        }}
-      />
+      <NestedInfo>
+        <Register
+          hideCombinations
+          onChange={() => {
+            onLearn();
+          }}
+          labels={{
+            0: 'Pixel',
+            1: 'Noel',
+          }}
+        />
+      </NestedInfo>
     </>
   );
 }
@@ -44,17 +48,20 @@ function Learnable1() {
           tent
         </Typography>
       </BulletPoints>
-      <Register
-        onChange={() => {
-          onLearn();
-        }}
-        labels={{
-          0: '0',
-          1: '1',
-          2: '2',
-          3: '3',
-        }}
-      />
+      <NestedInfo>
+        <Register
+          hideCombinations
+          onChange={() => {
+            onLearn();
+          }}
+          labels={{
+            0: '0',
+            1: '1',
+            2: '2',
+            3: '3',
+          }}
+        />
+      </NestedInfo>
       <BulletPoints>
         <Typography>Idk who the third dog is either</Typography>
       </BulletPoints>
@@ -73,15 +80,18 @@ function Learnable2() {
           around the world
         </Typography>
       </BulletPoints>
-      <Register
-        onChange={() => {
-          onLearn();
-        }}
-        labels={{
-          0: 'Cool',
-          1: 'Neat',
-        }}
-      />
+      <NestedInfo>
+        <Register
+          hideCombinations
+          onChange={() => {
+            onLearn();
+          }}
+          labels={{
+            0: 'Cool',
+            1: 'Neat',
+          }}
+        />
+      </NestedInfo>
     </>
   );
 }

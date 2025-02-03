@@ -1,4 +1,4 @@
-import { List, ListItem, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import {
   Circle as CircleIcon,
@@ -23,6 +23,8 @@ import { InformationExampleTable } from './InformationExampleTable';
 import { useLearnableContext } from '../../learnable-provider/LearnableProvider';
 import { BulletPoints } from '../../layout/BulletPoints';
 import { Underline } from '../../typography/Underline';
+import { Register } from '../../memory/Register';
+import { NestedInfo } from '../../layout/learnable/NestedInfo';
 
 function Analogy() {
   return (
@@ -76,20 +78,18 @@ function Learnable0() {
           <Typography>The circle below is interactive!</Typography>
         </Stack>
       </BulletPoints>
-      <List>
-        <ListItem>
-          <MemoryCell
-            IconComponent={CircleIcon}
-            onChange={(value) => {
-              if (value) {
-                setHasBeenOn(true);
-              } else {
-                setHasBeenOff(true);
-              }
-            }}
-          />
-        </ListItem>
-      </List>
+      <NestedInfo>
+        <MemoryCell
+          IconComponent={CircleIcon}
+          onChange={(value) => {
+            if (value) {
+              setHasBeenOn(true);
+            } else {
+              setHasBeenOff(true);
+            }
+          }}
+        />
+      </NestedInfo>
     </>
   );
 }
@@ -114,8 +114,8 @@ function Learnable1() {
       <BulletPoints>
         <Typography>Regardless of physical medium</Typography>
       </BulletPoints>
-      <List>
-        <ListItem>
+      <NestedInfo>
+        <Stack direction="row" alignItems="center">
           <MemoryCell
             size="large"
             onChange={() => {
@@ -142,8 +142,8 @@ function Learnable1() {
             }}
           </MemoryCell>
           <Typography>Electricity in a wire</Typography>
-        </ListItem>
-        <ListItem>
+        </Stack>
+        <Stack direction="row" alignItems="center">
           <MemoryCell
             onChange={() => {
               setStates((previous) => ({
@@ -173,8 +173,8 @@ function Learnable1() {
           <Typography>
             Laser light reflecting off of a pit burned into a cd or dvd
           </Typography>
-        </ListItem>
-        <ListItem>
+        </Stack>
+        <Stack direction="row" alignItems="center">
           <MemoryCell
             onChange={() => {
               setStates((previous) => ({
@@ -205,8 +205,8 @@ function Learnable1() {
           <Typography>
             The north/south orientation of a magnet in a hard drive
           </Typography>
-        </ListItem>
-        <ListItem>
+        </Stack>
+        <Stack direction="row" alignItems="center">
           <MemoryCell
             onChange={() => {
               setStates((previous) => ({
@@ -237,8 +237,8 @@ function Learnable1() {
           <Typography>
             Electrons trapped in a transistor within a solid state drive
           </Typography>
-        </ListItem>
-      </List>
+        </Stack>
+      </NestedInfo>
     </>
   );
 }
@@ -263,8 +263,8 @@ function Learnable2() {
       <BulletPoints>
         <Typography>Regardless of abstract representation</Typography>
       </BulletPoints>
-      <List>
-        <ListItem>
+      <NestedInfo>
+        <Stack direction="row" alignItems="center">
           <MemoryCell
             onChange={() => {
               setStates((previous) => ({
@@ -280,8 +280,8 @@ function Learnable2() {
             }}
           </MemoryCell>
           <Typography>One of two shapes</Typography>
-        </ListItem>
-        <ListItem>
+        </Stack>
+        <Stack direction="row" alignItems="center">
           <MemoryCell
             onChange={() => {
               setStates((previous) => ({
@@ -296,13 +296,15 @@ function Learnable2() {
           >
             {({ color, isEnabled }) => {
               return (
-                <Typography color={color}>{isEnabled ? 'J' : '7'}</Typography>
+                <Typography color={isEnabled ? color : 'textDisabled'}>
+                  {isEnabled ? 'J' : '7'}
+                </Typography>
               );
             }}
           </MemoryCell>
           <Typography>One of two characters</Typography>
-        </ListItem>
-        <ListItem>
+        </Stack>
+        <Stack direction="row" alignItems="center">
           <MemoryCell
             onChange={() => {
               setStates((previous) => ({
@@ -318,8 +320,8 @@ function Learnable2() {
             }}
           </MemoryCell>
           <Typography>One of two arbitrary symbols</Typography>
-        </ListItem>
-        <ListItem>
+        </Stack>
+        <Stack direction="row" alignItems="center">
           <MemoryCell
             onChange={() => {
               setStates((previous) => ({
@@ -334,7 +336,9 @@ function Learnable2() {
           >
             {({ color, isEnabled }) => {
               return (
-                <Typography color={color}>{isEnabled ? '1' : '0'}</Typography>
+                <Typography color={isEnabled ? color : 'textDisabled'}>
+                  {isEnabled ? '1' : '0'}
+                </Typography>
               );
             }}
           </MemoryCell>
@@ -343,15 +347,14 @@ function Learnable2() {
             nary digi
             <Underline>t</Underline> (a <Underline>bit</Underline>)
           </Typography>
-        </ListItem>
-      </List>
+        </Stack>
+      </NestedInfo>
     </>
   );
 }
 
 function Learnable3() {
   const { onLearn } = useLearnableContext();
-  const [controlledValue, setControlledValue] = useState(false);
 
   return (
     <>
@@ -362,23 +365,18 @@ function Learnable3() {
           of boring binary math
         </Typography>
       </BulletPoints>
-      <List>
-        <ListItem>
-          <MemoryCell
-            onChange={(value) => {
-              setControlledValue(value);
-              onLearn();
-            }}
-          />
-          <MemoryCell value={controlledValue}>
-            {({ color, isEnabled }) => {
-              return (
-                <Typography color={color}>{isEnabled ? '1' : '0'}</Typography>
-              );
-            }}
-          </MemoryCell>
-        </ListItem>
-      </List>
+      <NestedInfo>
+        <Register
+          hideCombinations
+          onChange={() => {
+            onLearn();
+          }}
+          labels={{
+            0: '0',
+            1: '1',
+          }}
+        />
+      </NestedInfo>
     </>
   );
 }
@@ -392,7 +390,9 @@ function Learnable4() {
           doesn't have to mean anything
         </Typography>
       </BulletPoints>
-      <DataExampleTable />
+      <NestedInfo>
+        <DataExampleTable />
+      </NestedInfo>
     </>
   );
 }
@@ -405,7 +405,9 @@ function Learnable5() {
           <Underline>Information</Underline> is data with meaning
         </Typography>
       </BulletPoints>
-      <InformationExampleTable />
+      <NestedInfo>
+        <InformationExampleTable />
+      </NestedInfo>
     </>
   );
 }
@@ -428,32 +430,32 @@ function Learnable6() {
           later)
         </Typography>
       </BulletPoints>
-      <Stack>
-        <Stack direction="row">
+      <NestedInfo>
+        <Stack direction="row" alignItems="center">
           <MemoryCell onChange={onMemoryInteract} />
           <MemoryCell onChange={onMemoryInteract} />
           <MemoryCell onChange={onMemoryInteract} initialValue={true} />
           <MemoryCell onChange={onMemoryInteract} initialValue={true} />
         </Stack>
-        <Stack direction="row">
+        <Stack direction="row" alignItems="center">
           <MemoryCell onChange={onMemoryInteract} />
           <MemoryCell onChange={onMemoryInteract} initialValue={true} />
           <MemoryCell onChange={onMemoryInteract} />
           <MemoryCell onChange={onMemoryInteract} />
         </Stack>
-        <Stack direction="row">
+        <Stack direction="row" alignItems="center">
           <MemoryCell onChange={onMemoryInteract} initialValue={true} />
           <MemoryCell onChange={onMemoryInteract} />
           <MemoryCell onChange={onMemoryInteract} initialValue={true} />
           <MemoryCell onChange={onMemoryInteract} />
         </Stack>
-        <Stack direction="row">
+        <Stack direction="row" alignItems="center">
           <MemoryCell onChange={onMemoryInteract} />
           <MemoryCell onChange={onMemoryInteract} />
           <MemoryCell onChange={onMemoryInteract} initialValue={true} />
           <MemoryCell onChange={onMemoryInteract} />
         </Stack>
-      </Stack>
+      </NestedInfo>
     </>
   );
 }

@@ -12,6 +12,7 @@ import {
 import { InfoOutlined } from '@mui/icons-material';
 import { InfoText } from '../../typography/InfoText';
 import { Underline } from '../../typography/Underline';
+import { NestedInfo } from '../../layout/learnable/NestedInfo';
 
 function Learnable0() {
   return (
@@ -28,20 +29,22 @@ function Learnable0() {
         <Stack direction="row" gap={1} alignItems="center">
           <InfoOutlined color="info" fontSize="small" />
           <Typography>
-            You can interact with the memory cell <InfoText>and</InfoText>{' '}
+            You can interact with the memory cells <InfoText>and</InfoText>{' '}
             number field below
           </Typography>
         </Stack>
       </BulletPoints>
-      <ByteHeader hideCharacter readonlyUIntValue="Int" />
-      <Byte hideCharacter />
+      <NestedInfo>
+        <ByteHeader hideCharacter readonlyUIntValue="Int" />
+        <Byte hideCharacter />
+      </NestedInfo>
     </>
   );
 }
 
 function Learnable1() {
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>
           To support negative integers we need to indicate the{' '}
@@ -56,8 +59,10 @@ function Learnable1() {
           <InfoText>-128</InfoText> to <InfoText>127</InfoText>
         </Typography>
       </BulletPoints>
-      <ByteHeader showSignedInt hideCharacter />
-      <Byte showSignedInt hideCharacter initialUIntValue={128} />
+      <NestedInfo>
+        <ByteHeader showSignedInt hideCharacter />
+        <Byte showSignedInt hideCharacter initialUIntValue={128} />
+      </NestedInfo>
       <BulletPoints>
         <Typography>
           If only the left bit is on, then its signed value is{' '}
@@ -73,7 +78,7 @@ function Learnable1() {
           If all bits are on it's <InfoText>-1</InfoText>{' '}
         </Typography>
       </BulletPoints>
-    </>
+    </Stack>
   );
 }
 
@@ -110,7 +115,7 @@ function Learnable2() {
   };
 
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>
           Want to store a bigger number? Just group some bytes!
@@ -123,90 +128,92 @@ function Learnable2() {
           <InfoText>{MAX_VALUE.toLocaleString()}</InfoText>{' '}
         </Typography>
       </BulletPoints>
-      <Stack alignItems="center">
-        <Stack
-          gap={1}
-          sx={{
-            border: 0.5,
-            borderColor: theme.palette.action.disabled,
-            borderRadius: 5,
-            padding: 2,
-          }}
-          alignItems="center"
-        >
-          <Byte
-            hideUnsignedInt
-            hideCharacter
-            onChange={({ bits }) => {
-              onByteChange([bits, bytes[1], bytes[2], bytes[3]]);
+      <NestedInfo>
+        <Stack alignItems="center">
+          <Stack
+            gap={1}
+            sx={{
+              border: 0.5,
+              borderColor: theme.palette.action.disabled,
+              borderRadius: 5,
+              padding: 2,
             }}
-            value={bytes[0]}
-          />
-          <Byte
-            hideUnsignedInt
-            hideCharacter
-            onChange={({ bits }) => {
-              onByteChange([bytes[0], bits, bytes[2], bytes[3]]);
+            alignItems="center"
+          >
+            <Byte
+              hideUnsignedInt
+              hideCharacter
+              onChange={({ bits }) => {
+                onByteChange([bits, bytes[1], bytes[2], bytes[3]]);
+              }}
+              value={bytes[0]}
+            />
+            <Byte
+              hideUnsignedInt
+              hideCharacter
+              onChange={({ bits }) => {
+                onByteChange([bytes[0], bits, bytes[2], bytes[3]]);
+              }}
+              value={bytes[1]}
+            />
+            <Byte
+              hideUnsignedInt
+              hideCharacter
+              onChange={({ bits }) => {
+                onByteChange([bytes[0], bytes[1], bits, bytes[3]]);
+              }}
+              value={bytes[2]}
+            />
+            <Byte
+              hideUnsignedInt
+              hideCharacter
+              onChange={({ bits }) => {
+                onByteChange([bytes[0], bytes[1], bytes[2], bits]);
+              }}
+              value={bytes[3]}
+            />
+          </Stack>
+          <Input
+            error={!isUnsignedInputValid}
+            onChange={(event) => {
+              const textValue = event.target.value.slice(0, MAX_VALUE_LENGTH);
+              const isUnsignedInteger = /[1-9]*[0-9]/.test(textValue);
+              const unsignedDecimal = Number.parseInt(textValue, 10);
+
+              setUnsignedNumberInput(textValue);
+
+              if (
+                Number.isNaN(unsignedDecimal) ||
+                !isUnsignedInteger ||
+                unsignedDecimal < 0 ||
+                unsignedDecimal > MAX_VALUE
+              ) {
+                setIsUnsignedInputValid(false);
+                return;
+              }
+
+              const bits = unsignedDecimalToBits(unsignedDecimal, 32);
+              onByteChange([
+                bits.slice(0, 8),
+                bits.slice(8, 16),
+                bits.slice(16, 24),
+                bits.slice(24, 32),
+              ]);
             }}
-            value={bytes[1]}
-          />
-          <Byte
-            hideUnsignedInt
-            hideCharacter
-            onChange={({ bits }) => {
-              onByteChange([bytes[0], bytes[1], bits, bytes[3]]);
+            value={unsignedNumberInput}
+            sx={{
+              width: MAX_VALUE_LENGTH * 10,
+              color: theme.palette.warning.main,
             }}
-            value={bytes[2]}
-          />
-          <Byte
-            hideUnsignedInt
-            hideCharacter
-            onChange={({ bits }) => {
-              onByteChange([bytes[0], bytes[1], bytes[2], bits]);
+            inputProps={{
+              style: {
+                textAlign: 'center',
+              },
             }}
-            value={bytes[3]}
           />
         </Stack>
-        <Input
-          error={!isUnsignedInputValid}
-          onChange={(event) => {
-            const textValue = event.target.value.slice(0, MAX_VALUE_LENGTH);
-            const isUnsignedInteger = /[1-9]*[0-9]/.test(textValue);
-            const unsignedDecimal = Number.parseInt(textValue, 10);
-
-            setUnsignedNumberInput(textValue);
-
-            if (
-              Number.isNaN(unsignedDecimal) ||
-              !isUnsignedInteger ||
-              unsignedDecimal < 0 ||
-              unsignedDecimal > MAX_VALUE
-            ) {
-              setIsUnsignedInputValid(false);
-              return;
-            }
-
-            const bits = unsignedDecimalToBits(unsignedDecimal, 32);
-            onByteChange([
-              bits.slice(0, 8),
-              bits.slice(8, 16),
-              bits.slice(16, 24),
-              bits.slice(24, 32),
-            ]);
-          }}
-          value={unsignedNumberInput}
-          sx={{
-            width: MAX_VALUE_LENGTH * 10,
-            color: theme.palette.warning.main,
-          }}
-          inputProps={{
-            style: {
-              textAlign: 'center',
-            },
-          }}
-        />
-      </Stack>
-    </>
+      </NestedInfo>
+    </Stack>
   );
 }
 

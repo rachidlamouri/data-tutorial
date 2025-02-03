@@ -237,18 +237,21 @@ export function Byte({
 
 type ByteHeaderProps = {
   readonlyUIntValue?: string;
+  hideUnsignedInt?: boolean;
   showSignedInt?: boolean;
   hideCharacter?: boolean;
 };
 
 export function ByteHeader({
   readonlyUIntValue = 'UInt',
+  hideUnsignedInt,
   showSignedInt,
   hideCharacter,
 }: ByteHeaderProps) {
   return (
     <Byte
       hideBits
+      hideUnsignedInt={hideUnsignedInt}
       showSignedInt={showSignedInt}
       hideCharacter={hideCharacter}
       readonlyUIntValue={readonlyUIntValue}

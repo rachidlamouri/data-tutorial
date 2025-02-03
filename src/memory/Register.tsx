@@ -12,6 +12,8 @@ type RegisterProps = {
   value?: number;
   initialValue?: number;
   disabled?: boolean;
+  hideCombinations?: boolean;
+  width?: number;
 };
 
 type BitState = {
@@ -34,6 +36,8 @@ export function Register({
   value: controlledValue,
   initialValue: controlledInitialValue,
   disabled,
+  hideCombinations = false,
+  width,
 }: RegisterProps) {
   const theme = useTheme();
   const hideLabels = size !== undefined;
@@ -115,7 +119,7 @@ export function Register({
 
   return (
     <Stack direction="row" alignItems="center" gap={1} width="fit-content">
-      <Stack alignItems="center">
+      <Stack alignItems="center" sx={{ width }}>
         <Stack
           direction="row"
           alignItems="center"
@@ -142,7 +146,10 @@ export function Register({
           })}
         </Stack>
         <Typography color="secondary">
-          {!hideLabels && labels !== undefined && labels[decimalValue]}
+          {!hideLabels &&
+            !hideCombinations &&
+            labels !== undefined &&
+            labels[decimalValue]}
         </Typography>
         {label !== undefined && typeof label === 'string' ? (
           <Typography color="secondary">{label}</Typography>
@@ -150,7 +157,7 @@ export function Register({
           label
         )}
       </Stack>
-      {!hideLabels && (
+      {!hideLabels && !hideCombinations && (
         <Stack>
           {possibleValues.map((nextDecimalValue, index) => {
             const bitList = nextDecimalValue
@@ -184,6 +191,12 @@ export function Register({
           })}
         </Stack>
       )}
+      <Typography color="secondary">
+        {!hideLabels &&
+          hideCombinations &&
+          labels !== undefined &&
+          labels[decimalValue]}
+      </Typography>
     </Stack>
   );
 }
