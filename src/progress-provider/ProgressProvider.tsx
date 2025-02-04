@@ -1,4 +1,10 @@
-import { createContext, PropsWithChildren, useContext, useState } from 'react';
+import {
+  createContext,
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { useSubjectIndexContext } from '../subject-index-provider/SubjectIndexProvider';
 import { subjects } from '../subjects/subjects';
 
@@ -18,16 +24,34 @@ const ProgressContext = createContext<ProgressCtx>({
   updateLearnableProgress: () => {},
 });
 
-type ProgressProviderProps = PropsWithChildren;
+type ProgressProviderProps = PropsWithChildren<{
+  onInit: () => void;
+}>;
 
-export function ProgressProvider({ children }: ProgressProviderProps) {
+export function ProgressProvider({ children, onInit }: ProgressProviderProps) {
+  const [initState, setInitState] = useState(false);
   const [progress, setProgress] = useState<boolean[][]>(subjects.map(() => []));
+
+  useEffect(() => {
+    if (initState) {
+      return;
+    }
+
+    if (progress.every((list) => list.length > 0)) {
+      setInitState(true);
+      onInit();
+    }
+  }, [initState, onInit, progress]);
 
   return (
     <ProgressContext.Provider
       value={{
         progress,
         initSubjectProgress: (subjectIndex, count) => {
+          if (progress[subjectIndex].length > 0) {
+            return;
+          }
+
           setProgress((previous) => {
             return previous.map((previousSubject, index) => {
               if (index == subjectIndex) {

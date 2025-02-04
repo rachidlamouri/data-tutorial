@@ -5,11 +5,11 @@ import { Byte, ByteHeader } from '../../memory/Byte';
 import { useState } from 'react';
 import { Subject } from '../../layout/subject/Subject';
 import { characterToByte, characterToDecimal } from '../../memory/bitUtils';
-import { Register } from '../../memory/Register';
 import { InfoText } from '../../typography/InfoText';
 import { Underline } from '../../typography/Underline';
 import { InfoOutlined } from '@mui/icons-material';
 import { NestedInfo } from '../../layout/learnable/NestedInfo';
+import { MemoryCell } from '../../memory/MemoryCell';
 
 function Learnable0() {
   return (
@@ -79,13 +79,7 @@ function Learnable2() {
         </Typography>
       </BulletPoints>
       <NestedInfo>
-        <Register
-          hideCombinations
-          labels={{
-            0: 'Cool',
-            1: "Don't care",
-          }}
-        />
+        <MemoryCell label={['Cool', "Don't care"]} />
       </NestedInfo>
     </>
   );
@@ -109,7 +103,7 @@ function Learnable3() {
           <TextField
             onChange={(event) => {
               const eventValue = event.target.value;
-              setText(eventValue);
+              setText(eventValue.slice(0, 20));
             }}
             value={text}
           />

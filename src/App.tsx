@@ -69,11 +69,16 @@ const theme = createTheme({
 });
 
 function App() {
+  const [initState, setInitState] = useState(false);
   const [subject, setSubject] = useState(subjects[0]);
 
   return (
     <ThemeProvider theme={theme}>
-      <ProgressProvider>
+      <ProgressProvider
+        onInit={() => {
+          setInitState(true);
+        }}
+      >
         <CssBaseline />
         <AppBar
           position="fixed"
@@ -136,21 +141,27 @@ function App() {
             }}
           >
             <Toolbar />
-            {subjects.map((nextSubject) => {
-              return (
-                <Box
-                  key={nextSubject.index}
-                  sx={{
-                    display:
-                      nextSubject.index === subject.index ? 'visible' : 'none',
-                  }}
-                >
-                  <SubjectIndexProvider index={nextSubject.index}>
-                    <nextSubject.Component />
-                  </SubjectIndexProvider>
-                </Box>
-              );
-            })}
+            {subjects
+              .filter((nextSubject) => {
+                return !initState || nextSubject.index === subject.index;
+              })
+              .map((nextSubject) => {
+                return (
+                  <Box
+                    key={nextSubject.index}
+                    sx={{
+                      display:
+                        nextSubject.index === subject.index
+                          ? 'visible'
+                          : 'none',
+                    }}
+                  >
+                    <SubjectIndexProvider index={nextSubject.index}>
+                      <nextSubject.Component />
+                    </SubjectIndexProvider>
+                  </Box>
+                );
+              })}
           </Container>
         </Stack>
       </ProgressProvider>

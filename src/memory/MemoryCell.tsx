@@ -3,7 +3,7 @@ import {
   Circle as CircleIcon,
   CircleOutlined,
 } from '@mui/icons-material';
-import { IconButton, IconButtonProps } from '@mui/material';
+import { IconButton, IconButtonProps, Stack, Typography } from '@mui/material';
 import React, { ReactNode, useState } from 'react';
 
 type CellState = {
@@ -44,7 +44,7 @@ export function MemoryCell({
   const color = isEnabled ? 'primary' : 'disabled';
 
   return (
-    <>
+    <Stack direction="row" alignItems="center">
       <IconButton
         disabled={disabled}
         size={size}
@@ -62,8 +62,10 @@ export function MemoryCell({
           <IconComponent color={color} />
         )}
       </IconButton>
-      {label !== undefined && label[isEnabled ? 1 : 0]}
-    </>
+      <Typography color="secondary">
+        {label !== undefined && label[isEnabled ? 1 : 0]}
+      </Typography>
+    </Stack>
   );
 }
 
