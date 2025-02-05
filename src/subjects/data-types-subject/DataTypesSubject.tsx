@@ -1,103 +1,166 @@
 import { BigPicture } from '../../layout/BigPicture';
 import { BulletPoints } from '../../layout/BulletPoints';
-import { Input, Stack, Typography } from '@mui/material';
+import { Divider, Stack, Typography, useTheme } from '@mui/material';
 import { useState } from 'react';
-import { OldByte } from '../../memory/Byte';
+import { Byte } from '../../memory/Byte';
 import { Subject } from '../../layout/subject/Subject';
+import { NestedInfo } from '../../layout/learnable/NestedInfo';
+import {
+  bitsToUnsignedDecimal,
+  byteToCharacter,
+  characterToByte,
+  unsignedDecimalToBits,
+  unsignedDecimalToByte,
+} from '../../memory/bitUtils';
+import { Underline } from '../../typography/Underline';
 
 function Learnable0() {
-  const [firstValue, setFirstValue] = useState(5);
-  const [secondValue, setSecondValue] = useState('5'.charCodeAt(0));
-
-  const formatLabel = (value: number) => {
-    return (
-      <Stack>
-        <Typography>
-          Character Interpretation:{' '}
-          <Typography color="secondary" component="span">
-            {String.fromCharCode(value)}
-          </Typography>
-        </Typography>
-        <Typography>
-          Integer Interpretation:{' '}
-          <Typography color="secondary" component="span">
-            {value}
-          </Typography>
-        </Typography>
-      </Stack>
-    );
-  };
+  const [firstValue, setFirstValue] = useState(0);
+  const [secondValue, setSecondValue] = useState(0);
+  const sumDecimal = firstValue + secondValue;
+  const sumBits = unsignedDecimalToBits(sumDecimal, 16);
 
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>
-          Notice that the bits for a numeric character are different than the
-          bits for a number
+          Computers can do math with bits which means they can do math with
+          numbers
         </Typography>
       </BulletPoints>
-      <Stack alignItems="center" gap={1}>
-        <Input
-          onChange={(event) => {
-            const eventValue = event.target.value;
-            const characters = eventValue.split('');
-
-            const nextCharacter = characters[characters.length - 1];
-            if (
-              !['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(
-                nextCharacter,
-              )
-            ) {
-              return;
-            }
-
-            setFirstValue(Number.parseInt(nextCharacter));
-            setSecondValue(nextCharacter.charCodeAt(0));
-          }}
-          value={firstValue}
-          sx={{
-            width: 30,
-          }}
-          inputProps={{
-            style: { textAlign: 'center' },
-          }}
-        />
-        <Stack direction="row" gap={1}>
-          <OldByte
-            disabled
-            value={secondValue}
-            label={formatLabel(secondValue)}
-          />
-          <OldByte
-            disabled
-            value={firstValue}
-            label={formatLabel(firstValue)}
-          />
+      <NestedInfo>
+        <Stack gap={1}>
+          <Stack direction="row" gap={1}>
+            <Byte hideBits hideUnsignedInt hideCharacter />
+            <Byte
+              hideCharacter
+              onChange={(event) => {
+                setFirstValue(event.unsignedDecimal);
+              }}
+            />
+          </Stack>
+          <Stack direction="row" gap={1}>
+            <Byte hideBits hideUnsignedInt hideCharacter />
+            <Byte
+              hideCharacter
+              onChange={(event) => {
+                setSecondValue(event.unsignedDecimal);
+              }}
+            />
+          </Stack>
+          <Divider />
+          <Stack direction="row" gap={1}>
+            <Byte
+              readonly
+              hideUnsignedInt
+              hideCharacter
+              value={sumBits.slice(0, 8)}
+            />
+            <Byte
+              readonly
+              readonlyUIntValue={`${sumDecimal}`}
+              hideCharacter
+              value={sumBits.slice(8, 16)}
+            />
+          </Stack>
         </Stack>
-      </Stack>
-    </>
+      </NestedInfo>
+    </Stack>
   );
 }
 
 function Learnable1() {
+  const [firstValue, setFirstValue] = useState(characterToByte('A'));
+  const [secondValue, setSecondValue] = useState(characterToByte('B'));
+  const sumDecimal =
+    bitsToUnsignedDecimal(firstValue) + bitsToUnsignedDecimal(secondValue);
+  const sumBits = unsignedDecimalToBits(sumDecimal, 16);
+  const firstSumByte = sumBits.slice(0, 8);
+  const secondSumByte = sumBits.slice(8, 16);
+
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
-        <Typography>You can do math with numbers</Typography>
+        <Typography>Which means you can do math with text</Typography>
       </BulletPoints>
-    </>
+      <NestedInfo>
+        <Stack gap={1}>
+          <Stack direction="row" gap={1}>
+            <Byte hideBits hideUnsignedInt hideCharacter />
+            <Byte
+              onChange={(event) => {
+                setFirstValue(event.bits);
+              }}
+              value={firstValue}
+            />
+          </Stack>
+          <Stack direction="row" gap={1}>
+            <Byte hideBits hideUnsignedInt hideCharacter />
+            <Byte
+              onChange={(event) => {
+                setSecondValue(event.bits);
+              }}
+              value={secondValue}
+            />
+          </Stack>
+          <Divider />
+          <Stack direction="row" gap={1}>
+            <Byte readonly hideUnsignedInt hideCharacter value={firstSumByte} />
+            <Byte
+              readonly
+              readonlyUIntValue={`${sumDecimal}`}
+              readonlyCharValue={`${byteToCharacter(firstSumByte)}${byteToCharacter(secondSumByte)}`}
+              value={secondSumByte}
+            />
+          </Stack>
+        </Stack>
+      </NestedInfo>
+    </Stack>
   );
 }
 
 function Learnable2() {
+  const theme = useTheme();
+  const value = 207;
+
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>
-          You can teeeeechnically do math with characters (but we shouldn't)
+          Notice that the text representation of a number takes up more memory
+          than the number representation of a number
         </Typography>
       </BulletPoints>
-    </>
+      <NestedInfo>
+        <Byte readonly value={unsignedDecimalToByte(value)} />
+      </NestedInfo>
+      <NestedInfo>
+        <Stack
+          gap={1}
+          width="fit-content"
+          sx={{
+            border: 0.5,
+            borderColor: theme.palette.action.disabled,
+            borderRadius: 5,
+            padding: 2,
+          }}
+        >
+          {value
+            .toString()
+            .split('')
+            .map((renderedCharacter, renderedIndex) => {
+              return (
+                <Byte
+                  hideUnsignedInt
+                  key={renderedIndex}
+                  value={characterToByte(renderedCharacter)}
+                  readonly
+                />
+              );
+            })}
+        </Stack>
+      </NestedInfo>
+    </Stack>
   );
 }
 
@@ -106,8 +169,16 @@ function Learnable3() {
     <>
       <BulletPoints>
         <Typography>
-          Notice that storing a number as characters can require more bits than
-          interpreting it as a number
+          It's important to specify <Underline>data types</Underline>, since
+          they drastically change how a program uses that data
+        </Typography>
+        <Typography>
+          So far we have learned two <Underline>data types</Underline>:{' '}
+          <Underline>text</Underline> and <Underline>number</Underline>
+        </Typography>
+        <Typography>
+          Next we'll learn about <Underline>boolean</Underline> and{' '}
+          <Underline>null</Underline>
         </Typography>
       </BulletPoints>
     </>
@@ -123,6 +194,9 @@ export function DataTypesSubject() {
         ]}
       />
       <Learnable0 />
+      <Learnable1 />
+      <Learnable2 />
+      <Learnable3 />
     </Subject>
   );
 }

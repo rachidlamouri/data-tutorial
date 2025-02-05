@@ -6,6 +6,7 @@ import { MoreCandySubject } from './more-candy-subject';
 import { DataTypesSubject } from './data-types-subject/DataTypesSubject';
 import { TextEncodingsSubject } from './text-encodings-subject/TextEncodingsSubject';
 import { EncodingSubject } from './encoding-subject/EncodingSubject';
+import { BooleanSubject } from './boolean-subject/BooleanSubject';
 
 export type Subject = {
   index: number;
@@ -48,6 +49,7 @@ export const subjects: Subject[] = [
     Component: TextEncodingsSubject,
   },
   { title: 'Data Types', Component: DataTypesSubject },
+  { title: 'Boolean', Component: BooleanSubject },
 ].map((subject, index) => {
   return {
     index,

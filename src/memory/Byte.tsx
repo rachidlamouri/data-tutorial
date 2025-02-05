@@ -1,7 +1,7 @@
 import { ReactNode, useMemo, useState } from 'react';
 import { Register } from './Register';
 import { Input, Stack, useTheme } from '@mui/material';
-import { MemoryCell } from './MemoryCell';
+import { MemoryCell, ReadOnlyMemoryCell } from './MemoryCell';
 import {
   bitsToUnsignedDecimal,
   byteToCharacter,
@@ -32,7 +32,8 @@ type OnByteChangeHandlerEvent = {
 
 type OnByteChangeHandler = (event: OnByteChangeHandlerEvent) => void;
 
-type EncodedByteProps = {
+type ByteProps = {
+  readonly?: boolean;
   hideBits?: boolean;
   hideUnsignedInt?: boolean;
   showSignedInt?: boolean;
@@ -46,6 +47,7 @@ type EncodedByteProps = {
 };
 
 export function Byte({
+  readonly = false,
   hideBits = false,
   hideUnsignedInt = false,
   showSignedInt = false,
@@ -56,7 +58,7 @@ export function Byte({
   readonlyCharValue,
   onChange,
   value,
-}: EncodedByteProps) {
+}: ByteProps) {
   const theme = useTheme();
 
   const init = useMemo(() => {
@@ -80,6 +82,8 @@ export function Byte({
     init.unsignedDecimal.toString(),
   );
   const [isUnsignedInputValid, setIsUnsignedInputValid] = useState(true);
+  const renderedUnsignedNumber =
+    value !== undefined ? bitsToUnsignedDecimal(value) : unsignedNumberInput;
 
   const [signedNumberInput, setSignedNumberInput] = useState(
     init.signedDecimal.toString(),
@@ -122,8 +126,10 @@ export function Byte({
         }}
       >
         {renderedBits.map((renderedBit, renderedBitIndex) => {
+          const Component = readonly ? ReadOnlyMemoryCell : MemoryCell;
+
           return (
-            <MemoryCell
+            <Component
               key={renderedBitIndex}
               value={renderedBit}
               onChange={(newBit) => {
@@ -164,14 +170,18 @@ export function Byte({
 
             onBitsChange(unsignedDecimalToByte(unsignedDecimal));
           }}
-          value={readonlyUIntValue ?? unsignedNumberInput}
+          value={readonlyUIntValue ?? renderedUnsignedNumber}
           sx={{
             width: 40,
             color: theme.palette.warning.main,
           }}
           inputProps={{
             style: {
-              textAlign: readonlyUIntValue === undefined ? 'right' : 'center',
+              textAlign:
+                readonlyUIntValue === undefined ||
+                !Number.isNaN(Number.parseInt(readonlyUIntValue, 10))
+                  ? 'right'
+                  : 'center',
             },
           }}
         />
