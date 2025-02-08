@@ -5,6 +5,7 @@ import {
   TableCell,
   Typography,
   useTheme,
+  Stack,
 } from '@mui/material';
 import { MemoryCell } from '../../memory/MemoryCell';
 import {
@@ -51,10 +52,12 @@ export function InformationExampleTable() {
         </TableRow>
         <TableRow>
           <TableCell>
-            <MemoryCell onChange={onMemoryInteract} />
-            <MemoryCell onChange={onMemoryInteract} />
-            <MemoryCell onChange={onMemoryInteract} initialValue={true} />
-            <MemoryCell onChange={onMemoryInteract} />
+            <Stack direction="row">
+              <MemoryCell onChange={onMemoryInteract} />
+              <MemoryCell onChange={onMemoryInteract} />
+              <MemoryCell onChange={onMemoryInteract} initialValue={true} />
+              <MemoryCell onChange={onMemoryInteract} />
+            </Stack>
           </TableCell>
           <TableCell>
             <Typography>

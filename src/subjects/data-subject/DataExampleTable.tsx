@@ -75,23 +75,25 @@ export function DataExampleTable() {
         </TableRow>
         <TableRow>
           <TableCell>
-            <MemoryCell
-              value={sequence[0]}
-              onChange={buildOnValueChange(true, 0)}
-            />
-            <MemoryCell
-              value={sequence[1]}
-              onChange={buildOnValueChange(true, 1)}
-              initialValue={true}
-            />
-            <MemoryCell
-              value={sequence[2]}
-              onChange={buildOnValueChange(true, 2)}
-            />
-            <MemoryCell
-              value={sequence[3]}
-              onChange={buildOnValueChange(true, 3)}
-            />
+            <Stack direction="row">
+              <MemoryCell
+                value={sequence[0]}
+                onChange={buildOnValueChange(true, 0)}
+              />
+              <MemoryCell
+                value={sequence[1]}
+                onChange={buildOnValueChange(true, 1)}
+                initialValue={true}
+              />
+              <MemoryCell
+                value={sequence[2]}
+                onChange={buildOnValueChange(true, 2)}
+              />
+              <MemoryCell
+                value={sequence[3]}
+                onChange={buildOnValueChange(true, 3)}
+              />
+            </Stack>
           </TableCell>
           <TableCell>
             <Typography>A sequence of bits</Typography>

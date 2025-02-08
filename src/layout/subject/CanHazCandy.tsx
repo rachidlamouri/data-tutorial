@@ -14,6 +14,9 @@ export function CanHazCandy() {
           top: 0,
         });
       }}
+      sx={{
+        width: 'fit-content',
+      }}
     >
       Can Haz Candy?
     </Button>

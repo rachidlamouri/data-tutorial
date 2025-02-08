@@ -70,8 +70,8 @@ function Learnable0() {
     <>
       <BulletPoints>
         <Typography>
-          A <Underline>memory cell</Underline>
-          is something that can exist in one of two ways
+          A <Underline>memory cell</Underline> is something that can exist in
+          one of two ways
         </Typography>
         <Stack direction="row" gap={1} alignItems="center">
           <InfoOutlined color="info" fontSize="small" />
