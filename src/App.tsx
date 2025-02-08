@@ -21,6 +21,7 @@ import {
   ProgressProvider,
   useSubjectProgress,
 } from './progress-provider/ProgressProvider';
+import { useLocalStorage } from '@uidotdev/usehooks';
 
 type ProgressIndicatorProps = {
   isLearned: boolean;
@@ -70,7 +71,11 @@ const theme = createTheme({
 
 function App() {
   const [initState, setInitState] = useState(false);
-  const [subject, setSubject] = useState(subjects[0]);
+  const [subjectIndex, setSubjectIndex] = useLocalStorage(
+    'selected-subject-index',
+    0,
+  );
+  const subject = subjects[subjectIndex];
 
   return (
     <ThemeProvider theme={theme}>
@@ -111,7 +116,7 @@ function App() {
             <Tabs
               value={subject.index}
               onChange={(_event: React.SyntheticEvent, nextIndex: number) => {
-                setSubject(subjects[nextIndex]);
+                setSubjectIndex(nextIndex);
               }}
               variant="scrollable"
               scrollButtons={false}
