@@ -1,6 +1,7 @@
 import { BigPicture } from '../../layout/BigPicture';
 import { BulletPoints } from '../../layout/BulletPoints';
 import {
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -39,7 +40,7 @@ function Learnable1() {
   const isTrue = value.some((bit) => bit);
 
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>
           With gigabytes of memory available we can just use a whole byte
@@ -55,7 +56,7 @@ function Learnable1() {
           }}
         />
       </NestedInfo>
-    </>
+    </Stack>
   );
 }
 

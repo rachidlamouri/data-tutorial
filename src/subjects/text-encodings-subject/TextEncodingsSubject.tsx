@@ -147,7 +147,7 @@ function Learnable3() {
   );
 
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>
           Since a byte can encode a character, then a sequence of bytes can
@@ -174,23 +174,25 @@ function Learnable3() {
               padding: 2,
             }}
           >
-            {characters.length === 0 && (
-              <Byte hideBits hideCharacter hideUnsignedInt />
-            )}
-            {useMemo(
-              () =>
-                characters.map((character, index) => {
-                  return (
-                    <ByteWrapper
-                      index={index}
-                      character={character}
-                      key={`${index}${character}`}
-                      onCharacterChange={onCharacterChange}
-                    />
-                  );
-                }),
-              [characters, onCharacterChange],
-            )}
+            <ByteHeader hideUnsignedInt />
+            {useMemo(() => {
+              return (
+                characters.length > 0 && (
+                  <>
+                    {characters.map((character, index) => {
+                      return (
+                        <ByteWrapper
+                          index={index}
+                          character={character}
+                          key={`${index}${character}`}
+                          onCharacterChange={onCharacterChange}
+                        />
+                      );
+                    })}
+                  </>
+                )
+              );
+            }, [characters, onCharacterChange])}
           </Stack>
         </Stack>
       </NestedInfo>
@@ -201,7 +203,7 @@ function Learnable3() {
           }
         </Typography>
       </BulletPoints>
-    </>
+    </Stack>
   );
 }
 

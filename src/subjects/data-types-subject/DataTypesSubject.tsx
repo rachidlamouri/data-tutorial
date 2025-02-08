@@ -2,7 +2,7 @@ import { BigPicture } from '../../layout/BigPicture';
 import { BulletPoints } from '../../layout/BulletPoints';
 import { Divider, Stack, Typography, useTheme } from '@mui/material';
 import { useState } from 'react';
-import { Byte } from '../../memory/Byte';
+import { Byte, ByteHeader } from '../../memory/Byte';
 import { Subject } from '../../layout/subject/Subject';
 import { NestedInfo } from '../../layout/learnable/NestedInfo';
 import {
@@ -13,6 +13,7 @@ import {
   unsignedDecimalToByte,
 } from '../../memory/bitUtils';
 import { Underline } from '../../typography/Underline';
+import { InfoText } from '../../typography/InfoText';
 
 function Learnable0() {
   const [firstValue, setFirstValue] = useState(0);
@@ -30,6 +31,10 @@ function Learnable0() {
       </BulletPoints>
       <NestedInfo>
         <Stack gap={1}>
+          <Stack direction="row" gap={1}>
+            <Byte hideBits hideUnsignedInt hideCharacter />
+            <ByteHeader hideCharacter />
+          </Stack>
           <Stack direction="row" gap={1}>
             <Byte hideBits hideUnsignedInt hideCharacter />
             <Byte
@@ -84,6 +89,10 @@ function Learnable1() {
         <Typography>Which means you can do math with text</Typography>
       </BulletPoints>
       <NestedInfo>
+        <Stack direction="row" gap={1}>
+          <Byte hideBits hideUnsignedInt hideCharacter />
+          <ByteHeader />
+        </Stack>
         <Stack gap={1}>
           <Stack direction="row" gap={1}>
             <Byte hideBits hideUnsignedInt hideCharacter />
@@ -121,18 +130,36 @@ function Learnable1() {
 
 function Learnable2() {
   const theme = useTheme();
-  const value = 207;
+  const value = 107;
 
   return (
     <Stack gap={2}>
       <BulletPoints>
         <Typography>
-          Notice that the text representation of a number takes up more memory
-          than the number representation of a number
+          Notice that the <InfoText>integer</InfoText> representation of a
+          number can take up <InfoText>less</InfoText> memory than the{' '}
+          <InfoText>text</InfoText> representation of the same number
         </Typography>
       </BulletPoints>
       <NestedInfo>
-        <Byte readonly value={unsignedDecimalToByte(value)} />
+        <Stack
+          gap={1}
+          width="fit-content"
+          sx={{
+            border: 0.5,
+            borderColor: theme.palette.action.disabled,
+            borderRadius: 5,
+            padding: 2,
+          }}
+        >
+          <ByteHeader readonlyCharValue="" />
+          <Byte
+            readonly
+            value={unsignedDecimalToByte(value)}
+            readonlyUIntValue={`${value}`}
+            readonlyCharValue=""
+          />
+        </Stack>
       </NestedInfo>
       <NestedInfo>
         <Stack
@@ -145,14 +172,16 @@ function Learnable2() {
             padding: 2,
           }}
         >
+          <ByteHeader readonlyUIntValue="" />
           {value
             .toString()
             .split('')
             .map((renderedCharacter, renderedIndex) => {
               return (
                 <Byte
-                  hideUnsignedInt
                   key={renderedIndex}
+                  readonlyUIntValue=""
+                  readonlyCharValue={renderedCharacter}
                   value={characterToByte(renderedCharacter)}
                   readonly
                 />

@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { BigPicture } from '../../layout/BigPicture';
 import { Subject } from '../../layout/subject/Subject';
 import { BulletPoints } from '../../layout/BulletPoints';
@@ -41,7 +41,7 @@ function Learnable1() {
   const { onLearn } = useLearnableContext();
 
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>
           The bit below <Underline>encodes</Underline> the number of dogs in the
@@ -65,7 +65,7 @@ function Learnable1() {
       <BulletPoints>
         <Typography>Idk who the third dog is either</Typography>
       </BulletPoints>
-    </>
+    </Stack>
   );
 }
 

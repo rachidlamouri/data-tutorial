@@ -17,8 +17,7 @@ function Analogy() {
       <FlipCameraAndroid sx={{ fontSize: 80 }} />
       <BulletPoints>
         <Typography>
-          <Underline>null</Underline> is a place, not an interpretation of a
-          combination of bits
+          <Underline>null</Underline> is a place, not a combination of bits
         </Typography>
       </BulletPoints>
     </Stack>
@@ -31,7 +30,7 @@ function Learnable0() {
   const [values, setValues] = useState([7, 30, 19, 4]);
 
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>Memory is addressable</Typography>
         <Typography>Use the two bits below to select an address</Typography>
@@ -118,7 +117,7 @@ function Learnable0() {
           </Stack>
         </Stack>
       </NestedInfo>
-    </>
+    </Stack>
   );
 }
 
@@ -128,7 +127,7 @@ function Learnable1() {
   const [address, setAddress] = useState(1);
 
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>Computer memory exists in one giant group</Typography>
         <Typography>So the address bits would be in the same group</Typography>
@@ -203,7 +202,7 @@ function Learnable1() {
           />
         </Stack>
       </NestedInfo>
-    </>
+    </Stack>
   );
 }
 
@@ -213,7 +212,7 @@ function Learnable2() {
   const [address, setAddress] = useState(2);
 
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>
           We can change the interpretation (value) of the address picker byte
@@ -292,7 +291,7 @@ function Learnable2() {
           />
         </Stack>
       </NestedInfo>
-    </>
+    </Stack>
   );
 }
 
@@ -302,7 +301,7 @@ function Learnable3() {
   const [address, setAddress] = useState(1);
 
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>
           Lastly we can change the interpretation of a different byte
@@ -381,7 +380,7 @@ function Learnable3() {
           />
         </Stack>
       </NestedInfo>
-    </>
+    </Stack>
   );
 }
 
@@ -392,7 +391,7 @@ function Learnable4() {
   const [address, setAddress] = useState(1);
 
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>
           <Underline>null</Underline> is data that means "no data"
@@ -403,7 +402,7 @@ function Learnable4() {
         </Typography>
         <Typography>
           <Underline>null</Underline> is different than <InfoText>0</InfoText>,{' '}
-          <InfoText>empty text</InfoText>, or <InfoText>false</InfoText>
+          <InfoText>false</InfoText>, or <InfoText>empty text</InfoText>
         </Typography>
       </BulletPoints>
       <NestedInfo>
@@ -456,7 +455,7 @@ function Learnable4() {
           />
         </Stack>
       </NestedInfo>
-    </>
+    </Stack>
   );
 }
 

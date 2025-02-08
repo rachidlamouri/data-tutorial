@@ -1,4 +1,5 @@
 import {
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -253,7 +254,7 @@ function Learnable2() {
   }, [interactCount, onLearn]);
 
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>Three bits has even moooooore combinations</Typography>
       </BulletPoints>
@@ -275,7 +276,7 @@ function Learnable2() {
           }}
         />
       </NestedInfo>
-    </>
+    </Stack>
   );
 }
 
@@ -290,7 +291,7 @@ function Learnable3() {
   }, [interactCount, onLearn]);
 
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>Every bit doubles the number of possibilites! </Typography>
         <Typography>
@@ -312,7 +313,7 @@ function Learnable3() {
           }}
         />
       </NestedInfo>
-    </>
+    </Stack>
   );
 }
 
@@ -327,7 +328,7 @@ function Learnable4() {
   }, [interactCount, onLearn]);
 
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>
           Four bits is called a <Underline>nibble</Underline> lol
@@ -341,7 +342,7 @@ function Learnable4() {
           size={4}
         />
       </NestedInfo>
-    </>
+    </Stack>
   );
 }
 
