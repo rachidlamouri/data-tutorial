@@ -24,13 +24,41 @@ export function OldByte(props: OldByteProps) {
   return <Register showBorder {...props} size={8} />;
 }
 
-type OnByteChangeHandlerEvent = {
+export type OnByteChangeEvent = {
   bits: boolean[];
   unsignedDecimal: number;
   character: string;
 };
 
-type OnByteChangeHandler = (event: OnByteChangeHandlerEvent) => void;
+type OnByteChangeHandler = (event: OnByteChangeEvent) => void;
+
+type ByteBitProps = {
+  renderedBits: boolean[];
+  index: number;
+  readonly: boolean;
+  onChange: (newBits: boolean[]) => void;
+};
+
+function ByteBit({ index, renderedBits, readonly, onChange }: ByteBitProps) {
+  const Component = readonly ? ReadOnlyMemoryCell : MemoryCell;
+
+  return (
+    <Component
+      value={renderedBits[index]}
+      onChange={(newBit) => {
+        const newBits = renderedBits.map((oldBit, oldBitIndex) => {
+          if (oldBitIndex === index) {
+            return newBit;
+          }
+
+          return oldBit;
+        });
+
+        onChange(newBits);
+      }}
+    />
+  );
+}
 
 type ByteProps = {
   readonly?: boolean;
@@ -44,6 +72,8 @@ type ByteProps = {
   readonlyCharValue?: string;
   onChange?: OnByteChangeHandler;
   value?: boolean[];
+  showLastBorder?: boolean;
+  emphasize?: boolean;
 };
 
 export function Byte({
@@ -58,6 +88,8 @@ export function Byte({
   readonlyCharValue,
   onChange,
   value,
+  showLastBorder = false,
+  emphasize = false,
 }: ByteProps) {
   const theme = useTheme();
 
@@ -121,31 +153,98 @@ export function Byte({
         sx={{
           opacity: hideBits ? 0 : 1,
           border: 0.5,
-          borderColor: theme.palette.action.disabled,
+          borderColor: emphasize
+            ? theme.palette.secondary.main
+            : theme.palette.action.disabled,
           borderRadius: 50,
         }}
       >
-        {renderedBits.map((renderedBit, renderedBitIndex) => {
-          const Component = readonly ? ReadOnlyMemoryCell : MemoryCell;
-
-          return (
-            <Component
-              key={renderedBitIndex}
-              value={renderedBit}
-              onChange={(newBit) => {
-                const newBits = renderedBits.map((oldBit, oldBitIndex) => {
-                  if (oldBitIndex === renderedBitIndex) {
-                    return newBit;
-                  }
-
-                  return oldBit;
-                });
-
-                onBitsChange(newBits);
-              }}
-            />
-          );
-        })}
+        <Stack
+          direction="row"
+          sx={{
+            border: 0.5,
+            borderColor: 'transparent',
+            borderRadius: 50,
+          }}
+        >
+          <ByteBit
+            renderedBits={renderedBits}
+            index={0}
+            readonly={readonly}
+            onChange={onBitsChange}
+          />
+          <ByteBit
+            renderedBits={renderedBits}
+            index={1}
+            readonly={readonly}
+            onChange={onBitsChange}
+          />
+        </Stack>
+        <Stack
+          direction="row"
+          sx={{
+            border: 0.5,
+            borderColor: 'transparent',
+            borderRadius: 50,
+          }}
+        >
+          <ByteBit
+            renderedBits={renderedBits}
+            index={2}
+            readonly={readonly}
+            onChange={onBitsChange}
+          />
+          <ByteBit
+            renderedBits={renderedBits}
+            index={3}
+            readonly={readonly}
+            onChange={onBitsChange}
+          />
+        </Stack>
+        <Stack
+          direction="row"
+          sx={{
+            border: 0.5,
+            borderColor: 'transparent',
+            borderRadius: 50,
+          }}
+        >
+          <ByteBit
+            renderedBits={renderedBits}
+            index={4}
+            readonly={readonly}
+            onChange={onBitsChange}
+          />
+          <ByteBit
+            renderedBits={renderedBits}
+            index={5}
+            readonly={readonly}
+            onChange={onBitsChange}
+          />
+        </Stack>
+        <Stack
+          direction="row"
+          sx={{
+            border: 0.5,
+            borderColor: showLastBorder
+              ? theme.palette.secondary.main
+              : 'transparent',
+            borderRadius: 50,
+          }}
+        >
+          <ByteBit
+            renderedBits={renderedBits}
+            index={6}
+            readonly={readonly}
+            onChange={onBitsChange}
+          />
+          <ByteBit
+            renderedBits={renderedBits}
+            index={7}
+            readonly={readonly}
+            onChange={onBitsChange}
+          />
+        </Stack>
       </Stack>
       {!hideUnsignedInt && (
         <Input
@@ -250,6 +349,7 @@ export function Byte({
 
 type ByteHeaderProps = {
   readonlyUIntValue?: string;
+  readonlyCharValue?: string;
   hideUnsignedInt?: boolean;
   showSignedInt?: boolean;
   hideCharacter?: boolean;
@@ -257,6 +357,7 @@ type ByteHeaderProps = {
 
 export function ByteHeader({
   readonlyUIntValue = 'UInt',
+  readonlyCharValue = 'Char',
   hideUnsignedInt,
   showSignedInt,
   hideCharacter,
@@ -269,7 +370,7 @@ export function ByteHeader({
       hideCharacter={hideCharacter}
       readonlyUIntValue={readonlyUIntValue}
       readonlySIntValue="SInt"
-      readonlyCharValue="Char"
+      readonlyCharValue={readonlyCharValue}
     />
   );
 }

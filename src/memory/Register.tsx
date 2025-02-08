@@ -1,6 +1,6 @@
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { MemoryCell, MemoryCellProps, ReadOnlyMemoryCell } from './MemoryCell';
-import { Stack, Typography, useTheme } from '@mui/material';
+import { Stack, StackProps, Typography, useTheme } from '@mui/material';
 
 type RegisterProps = {
   isSigned?: boolean;
@@ -9,6 +9,7 @@ type RegisterProps = {
   size?: number;
   label?: ReactNode;
   showBorder?: boolean;
+  borderColor?: StackProps['color'];
   value?: number;
   initialValue?: number;
   disabled?: boolean;
@@ -38,6 +39,7 @@ export function Register({
   disabled,
   hideCombinations = false,
   width,
+  borderColor,
 }: RegisterProps) {
   const theme = useTheme();
   const hideLabels = size !== undefined;
@@ -126,7 +128,9 @@ export function Register({
           sx={{
             border: 0.5,
             borderColor: showBorder
-              ? theme.palette.action.disabled
+              ? borderColor
+                ? borderColor
+                : theme.palette.action.disabled
               : 'transparent',
             borderRadius: 50,
           }}
