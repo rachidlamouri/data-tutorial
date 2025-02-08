@@ -8,6 +8,7 @@ import { TextEncodingsSubject } from './text-encodings-subject/TextEncodingsSubj
 import { EncodingSubject } from './encoding-subject/EncodingSubject';
 import { BooleanSubject } from './boolean-subject/BooleanSubject';
 import { NullSubject } from './null-subject/NullSubject';
+import { RecapSubject } from './recap-subject/RecapSubject';
 
 export type Subject = {
   index: number;
@@ -52,6 +53,16 @@ export const subjects: Subject[] = [
   { title: 'Data Types', Component: DataTypesSubject },
   { title: 'Boolean', Component: BooleanSubject },
   { title: 'Null', Component: NullSubject },
+  {
+    title: (
+      <>
+        Recap
+        <br />
+        Beach Episode
+      </>
+    ),
+    Component: RecapSubject,
+  },
 ].map((subject, index) => {
   return {
     index,
