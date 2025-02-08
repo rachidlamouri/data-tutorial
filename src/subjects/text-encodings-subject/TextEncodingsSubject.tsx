@@ -1,8 +1,8 @@
 import { BigPicture } from '../../layout/BigPicture';
 import { BulletPoints } from '../../layout/BulletPoints';
 import { Link, Stack, TextField, Typography, useTheme } from '@mui/material';
-import { Byte, ByteHeader } from '../../memory/Byte';
-import { useState } from 'react';
+import { Byte, ByteHeader, OnByteChangeEvent } from '../../memory/Byte';
+import { useCallback, useMemo, useState } from 'react';
 import { Subject } from '../../layout/subject/Subject';
 import { characterToByte, characterToDecimal } from '../../memory/bitUtils';
 import { InfoText } from '../../typography/InfoText';
@@ -10,6 +10,7 @@ import { Underline } from '../../typography/Underline';
 import { InfoOutlined } from '@mui/icons-material';
 import { NestedInfo } from '../../layout/learnable/NestedInfo';
 import { MemoryCell } from '../../memory/MemoryCell';
+import { useDebounce } from '@uidotdev/usehooks';
 
 function Learnable0() {
   return (
@@ -85,10 +86,65 @@ function Learnable2() {
   );
 }
 
+type ByteWrapperProps = {
+  index: number;
+  character: string;
+  onCharacterChange: (index: number, character: string) => void;
+};
+
+function ByteWrapper({
+  index,
+  character,
+  onCharacterChange,
+}: ByteWrapperProps) {
+  const onByteChange = useCallback(
+    (event: OnByteChangeEvent) => {
+      onCharacterChange(index, event.character);
+    },
+    [index, onCharacterChange],
+  );
+
+  const value = useMemo(() => {
+    return characterToByte(character);
+  }, [character]);
+
+  return <Byte hideUnsignedInt value={value} onChange={onByteChange} />;
+}
+
+function useOptionalDebounce<T>(value: T, delay: number, isImmediate: boolean) {
+  const debouncedValue = useDebounce(value, delay);
+
+  return isImmediate ? value : debouncedValue;
+}
+
 function Learnable3() {
   const theme = useTheme();
   const [text, setText] = useState('Edit me!');
-  const characters = text.split('');
+  const [isImmediate, setIsImmediate] = useState(false);
+  const debouncedText = useOptionalDebounce(text, 500, isImmediate);
+
+  const characters = useMemo(() => {
+    return debouncedText.split('');
+  }, [debouncedText]);
+
+  const onCharacterChange = useCallback(
+    (index: number, newCharacter: string) => {
+      setIsImmediate(true);
+      setText((previous) => {
+        return previous
+          .split('')
+          .map((oldCharacter, nextIndex) => {
+            if (nextIndex === index) {
+              return newCharacter;
+            }
+
+            return oldCharacter;
+          })
+          .join('');
+      });
+    },
+    [setText],
+  );
 
   return (
     <>
@@ -103,7 +159,8 @@ function Learnable3() {
           <TextField
             onChange={(event) => {
               const eventValue = event.target.value;
-              setText(eventValue.slice(0, 20));
+              setIsImmediate(false);
+              setText(eventValue);
             }}
             value={text}
           />
@@ -117,29 +174,23 @@ function Learnable3() {
               padding: 2,
             }}
           >
-            {characters.map((renderedCharacter, renderedIndex) => {
-              return (
-                <Byte
-                  hideUnsignedInt
-                  key={renderedIndex}
-                  value={characterToByte(renderedCharacter)}
-                  onChange={(event) => {
-                    const nextCharacters = characters.map(
-                      (oldCharacter, oldIndex) => {
-                        if (oldIndex === renderedIndex) {
-                          return event.character;
-                        }
-
-                        return oldCharacter;
-                      },
-                    );
-
-                    const nextText = nextCharacters.join('');
-                    setText(nextText);
-                  }}
-                />
-              );
-            })}
+            {characters.length === 0 && (
+              <Byte hideBits hideCharacter hideUnsignedInt />
+            )}
+            {useMemo(
+              () =>
+                characters.map((character, index) => {
+                  return (
+                    <ByteWrapper
+                      index={index}
+                      character={character}
+                      key={`${index}${character}`}
+                      onCharacterChange={onCharacterChange}
+                    />
+                  );
+                }),
+              [characters, onCharacterChange],
+            )}
           </Stack>
         </Stack>
       </NestedInfo>
