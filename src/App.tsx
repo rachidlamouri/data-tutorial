@@ -77,6 +77,17 @@ function App() {
   );
   const subject = subjects[subjectIndex];
 
+  const topTitle =
+    typeof subject.title === 'string'
+      ? subject.title
+      : subject.title.map((value) => {
+          if (value === null) {
+            return ' ';
+          }
+
+          return value;
+        });
+
   return (
     <ThemeProvider theme={theme}>
       <ProgressProvider
@@ -97,7 +108,7 @@ function App() {
                 Data Tutorial
               </Typography>
               <Typography variant="h6" component="div">
-                {subject.title}
+                {topTitle}
               </Typography>
             </Breadcrumbs>
           </Toolbar>
@@ -123,12 +134,23 @@ function App() {
               orientation="vertical"
             >
               {subjects.map((subject, index) => {
+                const leftTitle =
+                  typeof subject.title === 'string'
+                    ? subject.title
+                    : subject.title.map((value) => {
+                        if (value === null) {
+                          return <br />;
+                        }
+
+                        return value;
+                      });
+
                 return (
                   <Tab
                     key={index}
                     label={
                       <>
-                        {subject.title}
+                        {leftTitle}
                         <SubjectIndexProvider index={subject.index}>
                           <TabProgress />
                         </SubjectIndexProvider>
