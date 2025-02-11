@@ -45,22 +45,42 @@ function ProgressIndicator({ isLearned }: ProgressIndicatorProps) {
 function TabProgress() {
   const { subjectProgress = [] } = useSubjectProgress();
 
-  const chunkSize = 6;
+  let chunkSize: number;
+  if (subjectProgress.length % 6 === 0) {
+    chunkSize = 4;
+  } else {
+    chunkSize = 5;
+  }
+
   const chunkCount = Math.ceil(subjectProgress.length / chunkSize);
   const chunks = Array.from({ length: chunkCount }).map((_, index) => {
     const startIndex = index * chunkSize;
     return subjectProgress.slice(startIndex, startIndex + chunkSize);
   });
 
-  return chunks.map((chunk, chunkIndex) => {
-    return (
-      <Stack direction="row" key={chunkIndex}>
-        {chunk.map((isLearned, index) => {
-          return <ProgressIndicator key={index} isLearned={isLearned} />;
-        })}
-      </Stack>
-    );
-  });
+  return (
+    <>
+      {chunks.map((chunk, chunkIndex) => {
+        return (
+          <Stack direction="row" key={chunkIndex}>
+            {chunk.map((isLearned, index) => {
+              return <ProgressIndicator key={index} isLearned={isLearned} />;
+            })}
+          </Stack>
+        );
+      })}
+      {chunks.length < 2 && (
+        <Stack sx={{ opacity: 0 }}>
+          <ProgressIndicator key={-1} isLearned={false} />
+        </Stack>
+      )}
+      {chunks.length < 1 && (
+        <Stack sx={{ opacity: 0 }}>
+          <ProgressIndicator key={-1} isLearned={false} />
+        </Stack>
+      )}
+    </>
+  );
 }
 
 const theme = createTheme({
