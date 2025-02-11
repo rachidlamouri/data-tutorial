@@ -9,6 +9,8 @@ import { EncodingSubject } from './encoding-subject/EncodingSubject';
 import { BooleanSubject } from './boolean-subject/BooleanSubject';
 import { NullSubject } from './null-subject/NullSubject';
 import { RecapSubject } from './recap-subject/RecapSubject';
+import { JsonSubject } from './json-subject/JsonSubject';
+import { JsonPrimitivesSubject } from './json-primitives-subject/JsonPrimitivesSubject';
 
 export type Subject = {
   index: number;
@@ -62,6 +64,17 @@ export const subjects: Subject[] = [
       </>
     ),
     Component: RecapSubject,
+  },
+  { title: 'JSON', Component: JsonSubject },
+  {
+    title: (
+      <>
+        JSON
+        <br />
+        Primitives
+      </>
+    ),
+    Component: JsonPrimitivesSubject,
   },
 ].map((subject, index) => {
   return {

@@ -121,10 +121,7 @@ function Learnable4() {
         <Typography>
           Changing the interpretation of bits changes its meaning
         </Typography>
-        <Typography>
-          Changing the interpretation of bits changes the information it
-          represents
-        </Typography>
+        <Typography>This changes the information it represents</Typography>
       </BulletPoints>
       <ByteHeader />
       <Byte initialUIntValue={65} />
