@@ -16,8 +16,16 @@ import { NestedInfo } from '../../layout/learnable/NestedInfo';
 import { unsignedDecimalToByte } from '../../memory/bitUtils';
 import { Byte } from '../../memory/Byte';
 import { useState } from 'react';
+import { useLearnableContext } from '../../learnable-provider/LearnableProvider';
+import { useTrackable } from '../../learnable-provider/useTrackable';
 
 function Learnable0() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: ['true', 'false'],
+    onFinish: onLearn,
+  });
+
   return (
     <>
       <BulletPoints>
@@ -28,13 +36,28 @@ function Learnable0() {
         <Typography>This can be represented by a single memory cell</Typography>
       </BulletPoints>
       <NestedInfo>
-        <MemoryCell label={['false', 'true']} />
+        <MemoryCell
+          label={['false', 'true']}
+          onChange={(value) => {
+            if (value) {
+              onTrack('true');
+            } else {
+              onTrack('false');
+            }
+          }}
+        />
       </NestedInfo>
     </>
   );
 }
 
 function Learnable1() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: ['true', 'false'],
+    onFinish: onLearn,
+  });
+
   const [value, setValue] = useState(unsignedDecimalToByte(0));
 
   const isTrue = value.some((bit) => bit);
@@ -53,6 +76,12 @@ function Learnable1() {
           readonlyCharValue={isTrue ? 'true' : 'false'}
           onChange={(event) => {
             setValue(event.bits);
+
+            if (event.unsignedDecimal === 0) {
+              onTrack('false');
+            } else {
+              onTrack('true');
+            }
           }}
         />
       </NestedInfo>
@@ -61,15 +90,91 @@ function Learnable1() {
 }
 
 function Learnable2() {
-  const [isPixelGood, setIsPixelGood] = useState(true);
-  const [isNoelGood, setIsNoelGood] = useState(true);
+  const compute = (isPixelGood: boolean, isNoelGood: boolean) => {
+    const isPixelGoodAndIsNoelGood = isPixelGood && isNoelGood;
+    const isPixelGoodOrIsNoelGood = isPixelGood || isNoelGood;
+    const notIsPixelGood = !isPixelGood;
+    const notIsNoelGood = !isNoelGood;
+    const isPixelGoodXorIsNoelGood =
+      (isPixelGood && !isNoelGood) || (!isPixelGood && isNoelGood);
 
-  const isPixelGoodAndIsNoelGood = isPixelGood && isNoelGood;
-  const isPixelGoodOrIsNoelGood = isPixelGood || isNoelGood;
-  const notIsPixelGood = !isPixelGood;
-  const notIsNoelGood = !isNoelGood;
-  const isPixelGoodXorIsNoelGood =
-    (isPixelGood && !isNoelGood) || (!isPixelGood && isNoelGood);
+    return {
+      isPixelGood,
+      isNoelGood,
+      isPixelGoodAndIsNoelGood,
+      isPixelGoodOrIsNoelGood,
+      notIsPixelGood,
+      notIsNoelGood,
+      isPixelGoodXorIsNoelGood,
+    };
+  };
+
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: [
+      'pt',
+      'pf',
+      'nt',
+      'nf',
+      'at',
+      'af',
+      'ot',
+      'of',
+      '!pt',
+      '!pf',
+      '!nt',
+      '!nf',
+      'xt',
+      'xf',
+    ],
+    onFinish: onLearn,
+  });
+
+  const [
+    {
+      isPixelGood,
+      isNoelGood,
+      isPixelGoodAndIsNoelGood,
+      isPixelGoodOrIsNoelGood,
+      notIsPixelGood,
+      notIsNoelGood,
+      isPixelGoodXorIsNoelGood,
+    },
+    setState,
+  ] = useState(compute(true, true));
+
+  const onChange = (pixel: boolean, noel: boolean) => {
+    const next = compute(pixel, noel);
+    setState(next);
+
+    if (isPixelGood !== next.isPixelGood) {
+      onTrack(next.isPixelGood ? 'pt' : 'pf');
+    }
+
+    if (isNoelGood !== next.isNoelGood) {
+      onTrack(next.isNoelGood ? 'nt' : 'nf');
+    }
+
+    if (isPixelGoodAndIsNoelGood !== next.isPixelGoodAndIsNoelGood) {
+      onTrack(next.isPixelGoodAndIsNoelGood ? 'at' : 'af');
+    }
+
+    if (isPixelGoodOrIsNoelGood !== next.isPixelGoodOrIsNoelGood) {
+      onTrack(next.isPixelGoodOrIsNoelGood ? 'ot' : 'of');
+    }
+
+    if (notIsPixelGood !== next.notIsPixelGood) {
+      onTrack(next.notIsPixelGood ? '!pt' : '!pf');
+    }
+
+    if (notIsNoelGood !== next.notIsNoelGood) {
+      onTrack(next.notIsNoelGood ? '!nt' : '!nf');
+    }
+
+    if (isPixelGoodXorIsNoelGood !== next.isPixelGoodXorIsNoelGood) {
+      onTrack(next.isPixelGoodXorIsNoelGood ? 'xt' : 'xf');
+    }
+  };
 
   return (
     <>
@@ -88,7 +193,9 @@ function Learnable2() {
               <TableCell>
                 <MemoryCell
                   label={['false', 'true']}
-                  onChange={setIsPixelGood}
+                  onChange={(value) => {
+                    onChange(value, isNoelGood);
+                  }}
                   value={isPixelGood}
                 />
               </TableCell>
@@ -98,7 +205,9 @@ function Learnable2() {
               <TableCell>
                 <MemoryCell
                   label={['false', 'true']}
-                  onChange={setIsNoelGood}
+                  onChange={(value) => {
+                    onChange(isPixelGood, value);
+                  }}
                   value={isNoelGood}
                 />
               </TableCell>

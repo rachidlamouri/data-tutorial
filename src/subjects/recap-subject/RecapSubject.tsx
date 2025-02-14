@@ -1,4 +1,4 @@
-import { Stack, TextField, Typography, useTheme } from '@mui/material';
+import { Button, Stack, TextField, Typography, useTheme } from '@mui/material';
 import { BigPicture } from '../../layout/BigPicture';
 import { BulletPoints } from '../../layout/BulletPoints';
 import { Subject } from '../../layout/subject/Subject';
@@ -274,13 +274,10 @@ function Learnable6() {
 }
 
 function Learnable7() {
-  const { updateVisiblity } = useLearnableContext();
-  useEffect(() => {
-    updateVisiblity(true);
-  }, [updateVisiblity]);
+  const { onLearn } = useLearnableContext();
 
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>
           What if we could communicate information <InfoText>and</InfoText> data
@@ -292,9 +289,16 @@ function Learnable7() {
         </Typography>
       </BulletPoints>
       <NestedInfo>
-        <MemoryCell label={['Woah!', "jk don't care"]} />
+        <Stack direction="row" gap={2}>
+          <Button variant="text" onClick={onLearn}>
+            don't care
+          </Button>
+          <Button variant="contained" onClick={onLearn}>
+            woah!
+          </Button>
+        </Stack>
       </NestedInfo>
-    </>
+    </Stack>
   );
 }
 

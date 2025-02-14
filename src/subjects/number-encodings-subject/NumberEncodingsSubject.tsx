@@ -1,7 +1,7 @@
 import { BigPicture } from '../../layout/BigPicture';
 import { BulletPoints } from '../../layout/BulletPoints';
 import { Input, Stack, Typography, useTheme } from '@mui/material';
-import { Byte, ByteHeader } from '../../memory/Byte';
+import { Byte, ByteHeader, ByteTrackable } from '../../memory/Byte';
 import { useMemo, useState } from 'react';
 import { Subject } from '../../layout/subject/Subject';
 import {
@@ -13,8 +13,16 @@ import { InfoOutlined } from '@mui/icons-material';
 import { InfoText } from '../../typography/InfoText';
 import { Underline } from '../../typography/Underline';
 import { NestedInfo } from '../../layout/learnable/NestedInfo';
+import { useLearnableContext } from '../../learnable-provider/LearnableProvider';
+import { useTrackable } from '../../learnable-provider/useTrackable';
 
 function Learnable0() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: [ByteTrackable.Bit, ByteTrackable.UInt, 255],
+    onFinish: onLearn,
+  });
+
   return (
     <>
       <BulletPoints>
@@ -36,13 +44,40 @@ function Learnable0() {
       </BulletPoints>
       <NestedInfo>
         <ByteHeader hideCharacter readonlyUIntValue="Int" />
-        <Byte hideCharacter />
+        <Byte
+          hideCharacter
+          onChange={({ unsignedDecimal, trackable }) => {
+            if (
+              trackable === ByteTrackable.Bit ||
+              trackable === ByteTrackable.UInt
+            ) {
+              onTrack(trackable);
+            }
+
+            if (unsignedDecimal === 255) {
+              onTrack(unsignedDecimal);
+            }
+          }}
+        />
       </NestedInfo>
     </>
   );
 }
 
 function Learnable1() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: [
+      ByteTrackable.Bit,
+      ByteTrackable.UInt,
+      ByteTrackable.SInt,
+      0,
+      127,
+      -1,
+    ],
+    onFinish: onLearn,
+  });
+
   return (
     <Stack gap={2}>
       <BulletPoints>
@@ -61,7 +96,28 @@ function Learnable1() {
       </BulletPoints>
       <NestedInfo>
         <ByteHeader showSignedInt hideCharacter />
-        <Byte showSignedInt hideCharacter initialUIntValue={128} />
+        <Byte
+          showSignedInt
+          hideCharacter
+          initialUIntValue={128}
+          onChange={({ signedDecimal, trackable }) => {
+            if (
+              trackable === ByteTrackable.Bit ||
+              trackable === ByteTrackable.UInt ||
+              trackable === ByteTrackable.SInt
+            ) {
+              onTrack(trackable);
+            }
+
+            if (
+              signedDecimal === 0 ||
+              signedDecimal === 127 ||
+              signedDecimal === -1
+            ) {
+              onTrack(signedDecimal);
+            }
+          }}
+        />
       </NestedInfo>
       <BulletPoints>
         <Typography>
@@ -83,6 +139,12 @@ function Learnable1() {
 }
 
 function Learnable2() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: [0, 1, 2, 3, 'input'],
+    onFinish: onLearn,
+  });
+
   const MAX_VALUE = 4_294_967_295;
   const MAX_VALUE_LENGTH = MAX_VALUE.toString().length;
   const theme = useTheme();
@@ -144,6 +206,7 @@ function Learnable2() {
               hideUnsignedInt
               hideCharacter
               onChange={({ bits }) => {
+                onTrack(0);
                 onByteChange([bits, bytes[1], bytes[2], bytes[3]]);
               }}
               value={bytes[0]}
@@ -152,6 +215,7 @@ function Learnable2() {
               hideUnsignedInt
               hideCharacter
               onChange={({ bits }) => {
+                onTrack(1);
                 onByteChange([bytes[0], bits, bytes[2], bytes[3]]);
               }}
               value={bytes[1]}
@@ -160,6 +224,7 @@ function Learnable2() {
               hideUnsignedInt
               hideCharacter
               onChange={({ bits }) => {
+                onTrack(2);
                 onByteChange([bytes[0], bytes[1], bits, bytes[3]]);
               }}
               value={bytes[2]}
@@ -168,6 +233,7 @@ function Learnable2() {
               hideUnsignedInt
               hideCharacter
               onChange={({ bits }) => {
+                onTrack(3);
                 onByteChange([bytes[0], bytes[1], bytes[2], bits]);
               }}
               value={bytes[3]}
@@ -176,6 +242,8 @@ function Learnable2() {
           <Input
             error={!isUnsignedInputValid}
             onChange={(event) => {
+              onTrack('input');
+
               const textValue = event.target.value.slice(0, MAX_VALUE_LENGTH);
               const isUnsignedInteger = /[1-9]*[0-9]/.test(textValue);
               const unsignedDecimal = Number.parseInt(textValue, 10);

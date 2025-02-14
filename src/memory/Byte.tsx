@@ -24,19 +24,31 @@ export function OldByte(props: OldByteProps) {
   return <Register showBorder {...props} size={8} />;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
+export enum ByteTrackable {
+  Bit = 'Bit',
+  UInt = 'UInt',
+  SInt = 'SInt',
+  Char = 'Char',
+}
+
 export type OnByteChangeEvent = {
   bits: boolean[];
   unsignedDecimal: number;
+  signedDecimal: number;
   character: string;
+  trackable: ByteTrackable;
 };
 
-type OnByteChangeHandler = (event: OnByteChangeEvent) => void;
+export type OnByteChangeHandler = (event: OnByteChangeEvent) => void;
+
+type ByteBitChangeHandler = (newBits: boolean[]) => void;
 
 type ByteBitProps = {
   renderedBits: boolean[];
   index: number;
   readonly: boolean;
-  onChange: (newBits: boolean[]) => void;
+  onChange: ByteBitChangeHandler;
 };
 
 function ByteBit({ index, renderedBits, readonly, onChange }: ByteBitProps) {
@@ -126,7 +138,7 @@ export function Byte({
   const renderedCharacter =
     value !== undefined ? byteToCharacter(value) : character;
 
-  const onBitsChange = (newBits: boolean[]) => {
+  const onBitsChange = (newBits: boolean[], trackable: ByteTrackable) => {
     const unsignedDecimal = bitsToUnsignedDecimal(newBits);
     const signedDecimal = byteToSignedDecimal(newBits);
     const character = unsignedDecimalToCharacter(unsignedDecimal);
@@ -141,8 +153,14 @@ export function Byte({
     onChange?.({
       bits: newBits,
       unsignedDecimal,
+      signedDecimal,
       character,
+      trackable,
     });
+  };
+
+  const onBitChange: ByteBitChangeHandler = (newBits) => {
+    onBitsChange(newBits, ByteTrackable.Bit);
   };
 
   return (
@@ -171,13 +189,13 @@ export function Byte({
             renderedBits={renderedBits}
             index={0}
             readonly={readonly}
-            onChange={onBitsChange}
+            onChange={onBitChange}
           />
           <ByteBit
             renderedBits={renderedBits}
             index={1}
             readonly={readonly}
-            onChange={onBitsChange}
+            onChange={onBitChange}
           />
         </Stack>
         <Stack
@@ -192,13 +210,13 @@ export function Byte({
             renderedBits={renderedBits}
             index={2}
             readonly={readonly}
-            onChange={onBitsChange}
+            onChange={onBitChange}
           />
           <ByteBit
             renderedBits={renderedBits}
             index={3}
             readonly={readonly}
-            onChange={onBitsChange}
+            onChange={onBitChange}
           />
         </Stack>
         <Stack
@@ -213,13 +231,13 @@ export function Byte({
             renderedBits={renderedBits}
             index={4}
             readonly={readonly}
-            onChange={onBitsChange}
+            onChange={onBitChange}
           />
           <ByteBit
             renderedBits={renderedBits}
             index={5}
             readonly={readonly}
-            onChange={onBitsChange}
+            onChange={onBitChange}
           />
         </Stack>
         <Stack
@@ -236,13 +254,13 @@ export function Byte({
             renderedBits={renderedBits}
             index={6}
             readonly={readonly}
-            onChange={onBitsChange}
+            onChange={onBitChange}
           />
           <ByteBit
             renderedBits={renderedBits}
             index={7}
             readonly={readonly}
-            onChange={onBitsChange}
+            onChange={onBitChange}
           />
         </Stack>
       </Stack>
@@ -267,7 +285,10 @@ export function Byte({
               return;
             }
 
-            onBitsChange(unsignedDecimalToByte(unsignedDecimal));
+            onBitsChange(
+              unsignedDecimalToByte(unsignedDecimal),
+              ByteTrackable.UInt,
+            );
           }}
           value={readonlyUIntValue ?? renderedUnsignedNumber}
           sx={{
@@ -306,7 +327,10 @@ export function Byte({
               return;
             }
 
-            onBitsChange(signedDecimalToByte(signedDecimal));
+            onBitsChange(
+              signedDecimalToByte(signedDecimal),
+              ByteTrackable.SInt,
+            );
           }}
           value={readonlySIntValue ?? signedNumberInput}
           sx={{
@@ -332,7 +356,7 @@ export function Byte({
               return;
             }
 
-            onBitsChange(characterToByte(nextCharacter));
+            onBitsChange(characterToByte(nextCharacter), ByteTrackable.Char);
           }}
           value={readonlyCharValue ?? renderedCharacter}
           sx={{

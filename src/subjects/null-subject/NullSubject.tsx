@@ -7,9 +7,17 @@ import { BulletPoints } from '../../layout/BulletPoints';
 import { useState } from 'react';
 import { NestedInfo } from '../../layout/learnable/NestedInfo';
 import { bitsToUnsignedDecimal } from '../../memory/bitUtils';
-import { ByteHeader, Byte } from '../../memory/Byte';
+import {
+  ByteHeader,
+  Byte,
+  ByteTrackable,
+  OnByteChangeHandler,
+  OnByteChangeEvent,
+} from '../../memory/Byte';
 import { Register } from '../../memory/Register';
 import { InfoText } from '../../typography/InfoText';
+import { useLearnableContext } from '../../learnable-provider/LearnableProvider';
+import { useTrackable } from '../../learnable-provider/useTrackable';
 
 function Analogy() {
   return (
@@ -25,6 +33,18 @@ function Analogy() {
 }
 
 function Learnable0() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: [0, 1, 2, 3, ByteTrackable.Bit, ByteTrackable.UInt],
+    onFinish: onLearn,
+  });
+
+  const onByteChange: OnByteChangeHandler = ({ trackable }) => {
+    if (trackable === ByteTrackable.Bit || trackable === ByteTrackable.UInt) {
+      onTrack(trackable);
+    }
+  };
+
   const theme = useTheme();
   const [address, setAddress] = useState(0);
   const [values, setValues] = useState([7, 30, 19, 4]);
@@ -42,6 +62,10 @@ function Learnable0() {
             value={address}
             onChange={(value) => {
               setAddress(value);
+
+              if (value === 0 || value === 1 || value === 2 || value === 3) {
+                onTrack(value);
+              }
             }}
             labels={{
               '0': '0',
@@ -65,6 +89,7 @@ function Learnable0() {
             <Byte
               readonlyCharValue={`${values[0]}`}
               onChange={(event) => {
+                onByteChange(event);
                 setValues([
                   event.unsignedDecimal,
                   values[1],
@@ -80,6 +105,7 @@ function Learnable0() {
               emphasize={address === 1}
               initialUIntValue={values[1]}
               onChange={(event) => {
+                onByteChange(event);
                 setValues([
                   values[0],
                   event.unsignedDecimal,
@@ -93,6 +119,7 @@ function Learnable0() {
               emphasize={address === 2}
               initialUIntValue={values[2]}
               onChange={(event) => {
+                onByteChange(event);
                 setValues([
                   values[0],
                   values[1],
@@ -106,6 +133,7 @@ function Learnable0() {
               emphasize={address === 3}
               initialUIntValue={values[3]}
               onChange={(event) => {
+                onByteChange(event);
                 setValues([
                   values[0],
                   values[1],
@@ -122,6 +150,18 @@ function Learnable0() {
 }
 
 function Learnable1() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: [0, 1, 2, 3, ByteTrackable.Bit, ByteTrackable.UInt],
+    onFinish: onLearn,
+  });
+
+  const onByteChange: OnByteChangeHandler = ({ trackable }) => {
+    if (trackable === ByteTrackable.Bit || trackable === ByteTrackable.UInt) {
+      onTrack(trackable);
+    }
+  };
+
   const theme = useTheme();
   const [values, setValues] = useState([129, 20, 34, 5]);
   const [address, setAddress] = useState(1);
@@ -150,6 +190,14 @@ function Learnable1() {
             onChange={(event) => {
               const newIndex = bitsToUnsignedDecimal(event.bits.slice(6));
               setAddress(newIndex);
+              if (
+                newIndex === 0 ||
+                newIndex === 1 ||
+                newIndex === 2 ||
+                newIndex === 3
+              ) {
+                onTrack(newIndex);
+              }
 
               setValues([
                 event.unsignedDecimal,
@@ -166,6 +214,8 @@ function Learnable1() {
             emphasize={address === 1}
             initialUIntValue={values[1]}
             onChange={(event) => {
+              onByteChange(event);
+
               setValues([
                 values[0],
                 event.unsignedDecimal,
@@ -179,6 +229,8 @@ function Learnable1() {
             emphasize={address === 2}
             initialUIntValue={values[2]}
             onChange={(event) => {
+              onByteChange(event);
+
               setValues([
                 values[0],
                 values[1],
@@ -192,6 +244,8 @@ function Learnable1() {
             emphasize={address === 3}
             initialUIntValue={values[3]}
             onChange={(event) => {
+              onByteChange(event);
+
               setValues([
                 values[0],
                 values[1],
@@ -207,9 +261,24 @@ function Learnable1() {
 }
 
 function Learnable2() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: [0, 1, 2, 3, 'ref'],
+    onFinish: onLearn,
+  });
+
   const theme = useTheme();
   const [values, setValues] = useState([102, 103, 104, 105]);
   const [address, setAddress] = useState(2);
+
+  const onByteChange = ({ trackable }: OnByteChangeEvent, index: number) => {
+    if (
+      (trackable === ByteTrackable.Bit || trackable === ByteTrackable.UInt) &&
+      index === address
+    ) {
+      onTrack('ref');
+    }
+  };
 
   return (
     <Stack gap={2}>
@@ -239,6 +308,14 @@ function Learnable2() {
             onChange={(event) => {
               const newIndex = bitsToUnsignedDecimal(event.bits.slice(6));
               setAddress(newIndex);
+              if (
+                newIndex === 0 ||
+                newIndex === 1 ||
+                newIndex === 2 ||
+                newIndex === 3
+              ) {
+                onTrack(newIndex);
+              }
 
               setValues([
                 event.unsignedDecimal,
@@ -255,6 +332,7 @@ function Learnable2() {
             emphasize={address === 1}
             initialUIntValue={values[1]}
             onChange={(event) => {
+              onByteChange(event, 1);
               setValues([
                 values[0],
                 event.unsignedDecimal,
@@ -268,6 +346,7 @@ function Learnable2() {
             emphasize={address === 2}
             initialUIntValue={values[2]}
             onChange={(event) => {
+              onByteChange(event, 2);
               setValues([
                 values[0],
                 values[1],
@@ -281,6 +360,7 @@ function Learnable2() {
             emphasize={address === 3}
             initialUIntValue={values[3]}
             onChange={(event) => {
+              onByteChange(event, 3);
               setValues([
                 values[0],
                 values[1],
@@ -296,6 +376,26 @@ function Learnable2() {
 }
 
 function Learnable3() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: [0, 1, 2, 3, 'null', 'ref'],
+    onFinish: onLearn,
+  });
+
+  const onByteChange = (index: number) => {
+    if (address !== index) {
+      return;
+    }
+
+    if (index === 1) {
+      onTrack('null');
+    }
+
+    if (index === 2 || index === 3) {
+      onTrack('ref');
+    }
+  };
+
   const theme = useTheme();
   const [values, setValues] = useState([129, 20, 200, 5]);
   const [address, setAddress] = useState(1);
@@ -328,6 +428,14 @@ function Learnable3() {
             onChange={(event) => {
               const newIndex = bitsToUnsignedDecimal(event.bits.slice(6));
               setAddress(newIndex);
+              if (
+                newIndex === 0 ||
+                newIndex === 1 ||
+                newIndex === 2 ||
+                newIndex === 3
+              ) {
+                onTrack(newIndex);
+              }
 
               setValues([
                 event.unsignedDecimal,
@@ -344,6 +452,7 @@ function Learnable3() {
             emphasize={address === 1}
             initialUIntValue={values[1]}
             onChange={(event) => {
+              onByteChange(1);
               setValues([
                 values[0],
                 event.unsignedDecimal,
@@ -357,6 +466,7 @@ function Learnable3() {
             emphasize={address === 2}
             initialUIntValue={values[2]}
             onChange={(event) => {
+              onByteChange(2);
               setValues([
                 values[0],
                 values[1],
@@ -370,6 +480,7 @@ function Learnable3() {
             emphasize={address === 3}
             initialUIntValue={values[3]}
             onChange={(event) => {
+              onByteChange(3);
               setValues([
                 values[0],
                 values[1],
@@ -385,6 +496,12 @@ function Learnable3() {
 }
 
 function Learnable4() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: [0, 1, 2, 3],
+    onFinish: onLearn,
+  });
+
   const theme = useTheme();
   const [values, setValues] = useState([69, 250, 0, 0]);
   const labels = [`${values[0]}`, 'NULL', '0', 'false'];
@@ -418,11 +535,19 @@ function Learnable4() {
         >
           <ByteHeader readonlyCharValue="Value" />
           <Byte
-            readonlyCharValue={`${labels[0]}`}
+            readonlyCharValue={`${labels[address]}`}
             showLastBorder
             onChange={(event) => {
               const newIndex = bitsToUnsignedDecimal(event.bits.slice(6));
               setAddress(newIndex);
+              if (
+                newIndex === 0 ||
+                newIndex === 1 ||
+                newIndex === 2 ||
+                newIndex === 3
+              ) {
+                onTrack(newIndex);
+              }
 
               setValues([
                 event.unsignedDecimal,

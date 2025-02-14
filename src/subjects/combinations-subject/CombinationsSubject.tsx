@@ -16,21 +16,14 @@ import { Byte } from '../../memory/Byte';
 import { Underline } from '../../typography/Underline';
 import { InfoText } from '../../typography/InfoText';
 import { NestedInfo } from '../../layout/learnable/NestedInfo';
+import { useTrackable } from '../../learnable-provider/useTrackable';
 
 function Learnable0() {
-  const { onLearn, isVisible } = useLearnableContext();
-  const [states, setStates] = useState({
-    outdoors: false,
-    candy: false,
-    gender: false,
-    color: false,
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: ['outdoors', 'candy', 'gender', 'color'],
+    onFinish: onLearn,
   });
-
-  useEffect(() => {
-    if (!isVisible && Object.values(states).every((value) => value)) {
-      onLearn();
-    }
-  }, [states, onLearn, isVisible]);
 
   return (
     <>
@@ -49,10 +42,7 @@ function Learnable0() {
               <TableCell>
                 <Register
                   onChange={() => {
-                    setStates((previous) => ({
-                      ...previous,
-                      outdoors: true,
-                    }));
+                    onTrack('outdoors');
                   }}
                   labels={{
                     0: 'rocks',
@@ -68,10 +58,7 @@ function Learnable0() {
               <TableCell>
                 <Register
                   onChange={() => {
-                    setStates((previous) => ({
-                      ...previous,
-                      candy: true,
-                    }));
+                    onTrack('candy');
                   }}
                   labels={{
                     0: '4',
@@ -88,10 +75,7 @@ function Learnable0() {
                 <Register
                   width={100}
                   onChange={() => {
-                    setStates((previous) => ({
-                      ...previous,
-                      gender: true,
-                    }));
+                    onTrack('gender');
                   }}
                   labels={{
                     0: 'man',
@@ -107,10 +91,7 @@ function Learnable0() {
               <TableCell>
                 <Register
                   onChange={() => {
-                    setStates((previous) => ({
-                      ...previous,
-                      color: true,
-                    }));
+                    onTrack('color');
                   }}
                   labels={{
                     0: 'gray',
@@ -127,19 +108,11 @@ function Learnable0() {
 }
 
 function Learnable1() {
-  const { onLearn, isVisible } = useLearnableContext();
-  const [states, setStates] = useState({
-    food: false,
-    candy: false,
-    gender: false,
-    color: false,
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: ['food', 'candy', 'gender', 'color'],
+    onFinish: onLearn,
   });
-
-  useEffect(() => {
-    if (!isVisible && Object.values(states).every((value) => value)) {
-      onLearn();
-    }
-  }, [states, onLearn, isVisible]);
 
   return (
     <>
@@ -158,10 +131,7 @@ function Learnable1() {
               <TableCell>
                 <Register
                   onChange={() => {
-                    setStates((previous) => ({
-                      ...previous,
-                      food: true,
-                    }));
+                    onTrack('food');
                   }}
                   labels={{
                     0: 'burger',
@@ -179,10 +149,7 @@ function Learnable1() {
               <TableCell>
                 <Register
                   onChange={() => {
-                    setStates((previous) => ({
-                      ...previous,
-                      candy: true,
-                    }));
+                    onTrack('candy');
                   }}
                   labels={{
                     0: '3',
@@ -201,10 +168,7 @@ function Learnable1() {
                 <Register
                   width={100}
                   onChange={() => {
-                    setStates((previous) => ({
-                      ...previous,
-                      gender: true,
-                    }));
+                    onTrack('gender');
                   }}
                   labels={{
                     0: 'non-bin-ary',
@@ -222,10 +186,7 @@ function Learnable1() {
               <TableCell>
                 <Register
                   onChange={() => {
-                    setStates((previous) => ({
-                      ...previous,
-                      color: true,
-                    }));
+                    onTrack('color');
                   }}
                   labels={{
                     0: 'red',

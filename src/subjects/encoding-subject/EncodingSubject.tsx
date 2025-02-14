@@ -1,4 +1,4 @@
-import { Stack, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import { BigPicture } from '../../layout/BigPicture';
 import { Subject } from '../../layout/subject/Subject';
 import { BulletPoints } from '../../layout/BulletPoints';
@@ -6,9 +6,14 @@ import { useLearnableContext } from '../../learnable-provider/LearnableProvider'
 import { Register } from '../../memory/Register';
 import { Underline } from '../../typography/Underline';
 import { NestedInfo } from '../../layout/learnable/NestedInfo';
+import { useTrackable } from '../../learnable-provider/useTrackable';
 
 function Learnable0() {
   const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: ['0', '1'],
+    onFinish: onLearn,
+  });
 
   return (
     <>
@@ -24,8 +29,8 @@ function Learnable0() {
       <NestedInfo>
         <Register
           hideCombinations
-          onChange={() => {
-            onLearn();
+          onChange={(value) => {
+            onTrack(value === 0 ? '0' : '1');
           }}
           labels={{
             0: 'Pixel',
@@ -51,8 +56,10 @@ function Learnable1() {
       <NestedInfo>
         <Register
           hideCombinations
-          onChange={() => {
-            onLearn();
+          onChange={(value) => {
+            if (value === 3) {
+              onLearn();
+            }
           }}
           labels={{
             0: '0',
@@ -81,16 +88,7 @@ function Learnable2() {
         </Typography>
       </BulletPoints>
       <NestedInfo>
-        <Register
-          hideCombinations
-          onChange={() => {
-            onLearn();
-          }}
-          labels={{
-            0: 'Cool',
-            1: 'Neat',
-          }}
-        />
+        <Button onClick={onLearn}>Cool!</Button>
       </NestedInfo>
     </>
   );

@@ -1,11 +1,24 @@
+import { Button } from '@mui/material';
 import { BigPicture } from '../../layout/BigPicture';
-import { BulletPoints } from '../../layout/BulletPoints';
 import { Subject } from '../../layout/subject/Subject';
+import { useLearnableContext } from '../../learnable-provider/LearnableProvider';
 
 function Learnable0() {
+  const { onLearn } = useLearnableContext();
+
   return (
     <>
-      <BulletPoints>Omnomnomnomnom</BulletPoints>
+      <Button onClick={onLearn}>Omnomnom</Button>
+    </>
+  );
+}
+
+function Learnable1() {
+  const { onLearn } = useLearnableContext();
+
+  return (
+    <>
+      <Button onClick={onLearn}>Omnomnomnomnom</Button>
     </>
   );
 }
@@ -19,6 +32,7 @@ export function CandypaloozaSubject() {
         ]}
       />
       <Learnable0 />
+      <Learnable1 />
     </Subject>
   );
 }

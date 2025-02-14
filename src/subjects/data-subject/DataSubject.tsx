@@ -25,6 +25,7 @@ import { BulletPoints } from '../../layout/BulletPoints';
 import { Underline } from '../../typography/Underline';
 import { Register } from '../../memory/Register';
 import { NestedInfo } from '../../layout/learnable/NestedInfo';
+import { useTrackable } from '../../learnable-provider/useTrackable';
 
 function Analogy() {
   return (
@@ -96,18 +97,10 @@ function Learnable0() {
 
 function Learnable1() {
   const { onLearn } = useLearnableContext();
-  const [states, setStates] = useState({
-    wire: false,
-    cd: false,
-    hd: false,
-    ssd: false,
+  const { onTrack } = useTrackable({
+    keys: ['wire', 'cd', 'hd', 'ssd'],
+    onFinish: onLearn,
   });
-
-  useEffect(() => {
-    if (Object.values(states).every((value) => value)) {
-      onLearn();
-    }
-  }, [states, onLearn]);
 
   return (
     <>
@@ -119,10 +112,7 @@ function Learnable1() {
           <MemoryCell
             size="large"
             onChange={() => {
-              setStates((previous) => ({
-                ...previous,
-                wire: true,
-              }));
+              onTrack('wire');
             }}
           >
             {({ color }) => {
@@ -146,10 +136,7 @@ function Learnable1() {
         <Stack direction="row" alignItems="center">
           <MemoryCell
             onChange={() => {
-              setStates((previous) => ({
-                ...previous,
-                cd: true,
-              }));
+              onTrack('cd');
             }}
             size="large"
           >
@@ -177,10 +164,7 @@ function Learnable1() {
         <Stack direction="row" alignItems="center">
           <MemoryCell
             onChange={() => {
-              setStates((previous) => ({
-                ...previous,
-                hd: true,
-              }));
+              onTrack('hd');
             }}
             size="large"
           >
@@ -209,10 +193,7 @@ function Learnable1() {
         <Stack direction="row" alignItems="center">
           <MemoryCell
             onChange={() => {
-              setStates((previous) => ({
-                ...previous,
-                ssd: true,
-              }));
+              onTrack('ssd');
             }}
             size="large"
           >
@@ -244,19 +225,11 @@ function Learnable1() {
 }
 
 function Learnable2() {
-  const { onLearn, isVisible } = useLearnableContext();
-  const [states, setStates] = useState({
-    shapes: false,
-    characters: false,
-    symbols: false,
-    bit: false,
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: ['shapes', 'characters', 'symbols', 'bit'],
+    onFinish: onLearn,
   });
-
-  useEffect(() => {
-    if (!isVisible && Object.values(states).every((value) => value)) {
-      onLearn();
-    }
-  }, [states, onLearn, isVisible]);
 
   return (
     <>
@@ -267,10 +240,7 @@ function Learnable2() {
         <Stack direction="row" alignItems="center">
           <MemoryCell
             onChange={() => {
-              setStates((previous) => ({
-                ...previous,
-                shapes: true,
-              }));
+              onTrack('shapes');
             }}
             size="large"
           >
@@ -284,10 +254,7 @@ function Learnable2() {
         <Stack direction="row" alignItems="center">
           <MemoryCell
             onChange={() => {
-              setStates((previous) => ({
-                ...previous,
-                characters: true,
-              }));
+              onTrack('characters');
             }}
             sx={{
               width: 48,
@@ -307,10 +274,7 @@ function Learnable2() {
         <Stack direction="row" alignItems="center">
           <MemoryCell
             onChange={() => {
-              setStates((previous) => ({
-                ...previous,
-                symbols: true,
-              }));
+              onTrack('symbols');
             }}
             size="large"
           >
@@ -324,10 +288,7 @@ function Learnable2() {
         <Stack direction="row" alignItems="center">
           <MemoryCell
             onChange={() => {
-              setStates((previous) => ({
-                ...previous,
-                bit: true,
-              }));
+              onTrack('bit');
             }}
             sx={{
               width: 48,

@@ -1,18 +1,43 @@
 import { BigPicture } from '../../layout/BigPicture';
 import { BulletPoints } from '../../layout/BulletPoints';
-import { Link, Stack, TextField, Typography, useTheme } from '@mui/material';
-import { Byte, ByteHeader, OnByteChangeEvent } from '../../memory/Byte';
+import {
+  Button,
+  Link,
+  Stack,
+  TextField,
+  Typography,
+  useTheme,
+} from '@mui/material';
+import {
+  Byte,
+  ByteHeader,
+  ByteTrackable,
+  OnByteChangeEvent,
+  OnByteChangeHandler,
+} from '../../memory/Byte';
 import { useCallback, useMemo, useState } from 'react';
 import { Subject } from '../../layout/subject/Subject';
-import { characterToByte, characterToDecimal } from '../../memory/bitUtils';
+import {
+  characterToByte,
+  characterToDecimal,
+  unsignedDecimalToByte,
+  unsignedDecimalToCharacter,
+} from '../../memory/bitUtils';
 import { InfoText } from '../../typography/InfoText';
 import { Underline } from '../../typography/Underline';
 import { InfoOutlined } from '@mui/icons-material';
 import { NestedInfo } from '../../layout/learnable/NestedInfo';
-import { MemoryCell } from '../../memory/MemoryCell';
 import { useDebounce } from '@uidotdev/usehooks';
+import { useLearnableContext } from '../../learnable-provider/LearnableProvider';
+import { useTrackable } from '../../learnable-provider/useTrackable';
 
 function Learnable0() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: [ByteTrackable.Bit, ByteTrackable.Char],
+    onFinish: onLearn,
+  });
+
   return (
     <>
       <BulletPoints>
@@ -28,13 +53,51 @@ function Learnable0() {
       </BulletPoints>
       <NestedInfo>
         <ByteHeader hideUnsignedInt />
-        <Byte hideUnsignedInt initialUIntValue={characterToDecimal('A')} />
+        <Byte
+          hideUnsignedInt
+          initialUIntValue={characterToDecimal('A')}
+          onChange={({ trackable }) => {
+            if (
+              trackable === ByteTrackable.Bit ||
+              trackable === ByteTrackable.Char
+            ) {
+              onTrack(trackable);
+            }
+          }}
+        />
       </NestedInfo>
     </>
   );
 }
 
 function Learnable1() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: [ByteTrackable.UInt, ByteTrackable.Char],
+    onFinish: onLearn,
+  });
+
+  const [numeral, setNumeral] = useState(5);
+
+  const onChange: OnByteChangeHandler = ({
+    unsignedDecimal,
+    character,
+    trackable,
+  }) => {
+    if (unsignedDecimal >= 0 && unsignedDecimal <= 9) {
+      setNumeral(unsignedDecimal);
+    }
+
+    const parsedDecimal = Number.parseInt(character, 10);
+    if (parsedDecimal >= 0 && parsedDecimal <= 9) {
+      setNumeral(parsedDecimal);
+    }
+
+    if (trackable === ByteTrackable.UInt || trackable === ByteTrackable.Char) {
+      onTrack(trackable);
+    }
+  };
+
   return (
     <>
       <BulletPoints>
@@ -42,13 +105,31 @@ function Learnable1() {
           Notice that the integer encoding of a numeral (<InfoText>0</InfoText>{' '}
           to <InfoText>9</InfoText>) is different than its character encoding
         </Typography>
-        <Typography>We'll learn why later</Typography>
+        <Stack direction="row" gap={1} alignItems="center">
+          <InfoOutlined color="info" fontSize="small" />
+          <Typography>
+            The inputs below are limited to <InfoText>0</InfoText> through{' '}
+            <InfoText>9</InfoText>
+          </Typography>
+        </Stack>
       </BulletPoints>{' '}
       <NestedInfo>
         <Stack gap={1}>
           <ByteHeader />
-          <Byte initialUIntValue={5} />
-          <Byte initialUIntValue={characterToDecimal('5')} />
+          <Byte
+            readonly
+            value={unsignedDecimalToByte(numeral)}
+            readonlyCharValue={unsignedDecimalToCharacter(numeral)}
+            onChange={onChange}
+          />
+          <Byte
+            readonly
+            value={characterToByte(numeral.toString())}
+            readonlyUIntValue={characterToDecimal(
+              numeral.toString(),
+            ).toString()}
+            onChange={onChange}
+          />
         </Stack>
       </NestedInfo>
     </>
@@ -56,8 +137,10 @@ function Learnable1() {
 }
 
 function Learnable2() {
+  const { onLearn } = useLearnableContext();
+
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>
           This character encoding is the{' '}
@@ -80,16 +163,27 @@ function Learnable2() {
         </Typography>
       </BulletPoints>
       <NestedInfo>
-        <MemoryCell label={['Cool', "Don't care"]} />
+        <Stack direction="row" gap={2}>
+          <Button variant="text" onClick={onLearn}>
+            don't care
+          </Button>
+          <Button variant="contained" onClick={onLearn}>
+            cool!
+          </Button>
+        </Stack>
       </NestedInfo>
-    </>
+    </Stack>
   );
 }
 
 type ByteWrapperProps = {
   index: number;
   character: string;
-  onCharacterChange: (index: number, character: string) => void;
+  onCharacterChange: (
+    index: number,
+    character: string,
+    trackable: ByteTrackable,
+  ) => void;
 };
 
 function ByteWrapper({
@@ -99,7 +193,7 @@ function ByteWrapper({
 }: ByteWrapperProps) {
   const onByteChange = useCallback(
     (event: OnByteChangeEvent) => {
-      onCharacterChange(index, event.character);
+      onCharacterChange(index, event.character, event.trackable);
     },
     [index, onCharacterChange],
   );
@@ -118,6 +212,12 @@ function useOptionalDebounce<T>(value: T, delay: number, isImmediate: boolean) {
 }
 
 function Learnable3() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: ['input', ByteTrackable.Bit, ByteTrackable.Char],
+    onFinish: onLearn,
+  });
+
   const theme = useTheme();
   const [text, setText] = useState('Edit me!');
   const [isImmediate, setIsImmediate] = useState(false);
@@ -128,7 +228,11 @@ function Learnable3() {
   }, [debouncedText]);
 
   const onCharacterChange = useCallback(
-    (index: number, newCharacter: string) => {
+    (index: number, newCharacter: string, trackable: ByteTrackable) => {
+      if (trackable === ByteTrackable.Bit || trackable === ByteTrackable.Char) {
+        onTrack(trackable);
+      }
+
       setIsImmediate(true);
       setText((previous) => {
         return previous
@@ -143,7 +247,7 @@ function Learnable3() {
           .join('');
       });
     },
-    [setText],
+    [setText, onTrack],
   );
 
   return (
@@ -158,6 +262,8 @@ function Learnable3() {
         <Stack gap={1}>
           <TextField
             onChange={(event) => {
+              onTrack('input');
+
               const eventValue = event.target.value;
               setIsImmediate(false);
               setText(eventValue);

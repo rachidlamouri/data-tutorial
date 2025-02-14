@@ -1,6 +1,6 @@
 import { BigPicture } from '../../layout/BigPicture';
 import { BulletPoints } from '../../layout/BulletPoints';
-import { Divider, Stack, Typography, useTheme } from '@mui/material';
+import { Button, Divider, Stack, Typography, useTheme } from '@mui/material';
 import { useState } from 'react';
 import { Byte, ByteHeader } from '../../memory/Byte';
 import { Subject } from '../../layout/subject/Subject';
@@ -14,8 +14,16 @@ import {
 } from '../../memory/bitUtils';
 import { Underline } from '../../typography/Underline';
 import { InfoText } from '../../typography/InfoText';
+import { useLearnableContext } from '../../learnable-provider/LearnableProvider';
+import { useTrackable } from '../../learnable-provider/useTrackable';
 
 function Learnable0() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: [0, 1],
+    onFinish: onLearn,
+  });
+
   const [firstValue, setFirstValue] = useState(0);
   const [secondValue, setSecondValue] = useState(0);
   const sumDecimal = firstValue + secondValue;
@@ -41,6 +49,7 @@ function Learnable0() {
               hideCharacter
               onChange={(event) => {
                 setFirstValue(event.unsignedDecimal);
+                onTrack(0);
               }}
             />
           </Stack>
@@ -50,6 +59,7 @@ function Learnable0() {
               hideCharacter
               onChange={(event) => {
                 setSecondValue(event.unsignedDecimal);
+                onTrack(1);
               }}
             />
           </Stack>
@@ -75,6 +85,12 @@ function Learnable0() {
 }
 
 function Learnable1() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack } = useTrackable({
+    keys: [0, 1],
+    onFinish: onLearn,
+  });
+
   const [firstValue, setFirstValue] = useState(characterToByte('A'));
   const [secondValue, setSecondValue] = useState(characterToByte('B'));
   const sumDecimal =
@@ -99,6 +115,7 @@ function Learnable1() {
             <Byte
               onChange={(event) => {
                 setFirstValue(event.bits);
+                onTrack(0);
               }}
               value={firstValue}
             />
@@ -108,6 +125,7 @@ function Learnable1() {
             <Byte
               onChange={(event) => {
                 setSecondValue(event.bits);
+                onTrack(1);
               }}
               value={secondValue}
             />
@@ -129,6 +147,7 @@ function Learnable1() {
 }
 
 function Learnable2() {
+  const { onLearn } = useLearnableContext();
   const theme = useTheme();
   const value = 107;
 
@@ -189,13 +208,24 @@ function Learnable2() {
             })}
         </Stack>
       </NestedInfo>
+      <NestedInfo>
+        <Button
+          onClick={() => {
+            onLearn();
+          }}
+        >
+          Noticed!
+        </Button>
+      </NestedInfo>
     </Stack>
   );
 }
 
 function Learnable3() {
+  const { onLearn } = useLearnableContext();
+
   return (
-    <>
+    <Stack gap={2}>
       <BulletPoints>
         <Typography>
           It's important to specify <Underline>data types</Underline>, since
@@ -210,7 +240,17 @@ function Learnable3() {
           <Underline>null</Underline>
         </Typography>
       </BulletPoints>
-    </>
+      <NestedInfo>
+        <Stack direction="row" gap={2}>
+          <Button variant="text" onClick={onLearn}>
+            Ugh
+          </Button>
+          <Button variant="contained" onClick={onLearn}>
+            oh boy!
+          </Button>
+        </Stack>
+      </NestedInfo>
+    </Stack>
   );
 }
 
