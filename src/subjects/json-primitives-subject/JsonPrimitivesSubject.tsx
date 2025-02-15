@@ -1,6 +1,6 @@
 import { Stack, Typography, TextField, useTheme } from '@mui/material';
 import { useDebounce } from '@uidotdev/usehooks';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BigPicture } from '../../layout/BigPicture';
 import { BulletPoints } from '../../layout/BulletPoints';
 import { NestedInfo } from '../../layout/learnable/NestedInfo';
@@ -14,6 +14,8 @@ import { OnByteChangeEvent, Byte, ByteHeader } from '../../memory/Byte';
 import { InfoText } from '../../typography/InfoText';
 import { Subject } from '../../layout/subject/Subject';
 import { ReadOnlyMemoryCell } from '../../memory/MemoryCell';
+import { useLearnableContext } from '../../learnable-provider/LearnableProvider';
+import { useTrackable } from '../../learnable-provider/useTrackable';
 
 type ByteWrapperProps = {
   index: number;
@@ -49,6 +51,19 @@ function ByteWrapper({
 }
 
 function Learnable0() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack, trackables } = useTrackable({
+    keys: [
+      'positive',
+      'negative',
+      'fraction',
+      'leading-zero',
+      'leading-decimal',
+      'ending-decimal',
+    ],
+    onFinish: onLearn,
+  });
+
   const theme = useTheme();
   const [text, setText] = useState('');
   const debouncedText = useDebounce(text, 500);
@@ -72,6 +87,32 @@ function Learnable0() {
   const isNegative = isNumber(parsed) && parsed < 0;
   const hasFraction = isNumber(parsed) && parsed.toString().includes('.');
   const printableValue = isNumber(parsed) ? parsed : 0;
+
+  useEffect(() => {
+    if (isPositive) {
+      onTrack('positive');
+    }
+
+    if (isNegative) {
+      onTrack('negative');
+    }
+
+    if (hasFraction) {
+      onTrack('fraction');
+    }
+
+    if (debouncedText.trim().startsWith('0')) {
+      onTrack('leading-zero');
+    }
+
+    if (debouncedText.trim().startsWith('.')) {
+      onTrack('leading-decimal');
+    }
+
+    if (debouncedText.trim().endsWith('.')) {
+      onTrack('ending-decimal');
+    }
+  }, [debouncedText, hasFraction, isNegative, isPositive, onTrack]);
 
   const buffer = new ArrayBuffer(8);
   const view = new DataView(buffer);
@@ -108,15 +149,15 @@ function Learnable0() {
       </BulletPoints>
       <NestedInfo>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.positive} />
           <Typography>be a positive integer</Typography>
         </Stack>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.negative} />
           <Typography>be a negative integer</Typography>
         </Stack>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.fraction} />
           <Typography>include decimals</Typography>
         </Stack>
       </NestedInfo>
@@ -125,17 +166,17 @@ function Learnable0() {
       </BulletPoints>
       <NestedInfo>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables['leading-zero']} />
           <Typography>
             start with a <InfoText>0</InfoText> unless it precedes a decimal
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables['leading-decimal']} />
           <Typography>start with a decimal</Typography>
         </Stack>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables['ending-decimal']} />
           <Typography>end in a decimal</Typography>
         </Stack>
       </NestedInfo>
@@ -231,6 +272,12 @@ function Learnable0() {
 }
 
 function Learnable1() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack, trackables } = useTrackable({
+    keys: ['text', 'escaped-quote'],
+    onFinish: onLearn,
+  });
+
   const theme = useTheme();
   const [text, setText] = useState('');
   const debouncedText = useDebounce(text, 500);
@@ -250,6 +297,16 @@ function Learnable1() {
 
   const isJson = parsed !== undefined;
   const bytes = isText(parsed) ? parsed.split('').map(characterToByte) : [];
+
+  useEffect(() => {
+    if (isText(parsed)) {
+      onTrack('text');
+    }
+
+    if (isText(parsed) && parsed.includes('"')) {
+      onTrack('escaped-quote');
+    }
+  }, [onTrack, parsed]);
 
   const onCharacterChange = useCallback(
     (index: number, newCharacter: string) => {
@@ -279,7 +336,7 @@ function Learnable1() {
       </BulletPoints>
       <NestedInfo>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.text} />
           <Typography>
             Start and end with double quotes ( <InfoText>"</InfoText>like this
             <InfoText>"</InfoText> )
@@ -291,7 +348,7 @@ function Learnable1() {
       </BulletPoints>
       <NestedInfo>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables['escaped-quote']} />
           <Typography>
             include a double quote ( <InfoText>"</InfoText> ) if it is preceded
             by a backslash ( <InfoText>\</InfoText> )
@@ -380,6 +437,12 @@ function Learnable1() {
 }
 
 function Learnable2() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack, trackables } = useTrackable({
+    keys: ['true', 'false'],
+    onFinish: onLearn,
+  });
+
   const theme = useTheme();
   const [text, setText] = useState('');
   const debouncedText = useDebounce(text, 500);
@@ -401,6 +464,16 @@ function Learnable2() {
   const isJson = parsed !== undefined;
   const isTrue = isBoolean(parsed) && parsed;
   const isFalse = isBoolean(parsed) && !parsed;
+
+  useEffect(() => {
+    if (isTrue) {
+      onTrack('true');
+    }
+
+    if (isFalse) {
+      onTrack('false');
+    }
+  }, [isFalse, isTrue, onTrack]);
 
   const onCharacterChange = useCallback(
     (index: number, newCharacter: string) => {
@@ -429,13 +502,13 @@ function Learnable2() {
       </BulletPoints>
       <NestedInfo>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.true} />
           <Typography>
             type <InfoText>true</InfoText> (no double quotes)
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.false} />
           <Typography>
             type <InfoText>false</InfoText> (no double quotes)
           </Typography>
@@ -519,6 +592,12 @@ function Learnable2() {
 }
 
 function Learnable3() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack, trackables } = useTrackable({
+    keys: ['null'],
+    onFinish: onLearn,
+  });
+
   const theme = useTheme();
   const [text, setText] = useState('');
   const debouncedText = useDebounce(text, 500);
@@ -538,6 +617,12 @@ function Learnable3() {
     typeof value === 'object' && value === null;
 
   const isJson = parsed !== undefined;
+
+  useEffect(() => {
+    if (isNull(parsed)) {
+      onTrack('null');
+    }
+  }, [onTrack, parsed]);
 
   const onCharacterChange = useCallback(
     (index: number, newCharacter: string) => {
@@ -566,7 +651,7 @@ function Learnable3() {
       </BulletPoints>
       <NestedInfo>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.null} />
           <Typography>
             just type <InfoText>null</InfoText> (lowercase no double quotes)
           </Typography>

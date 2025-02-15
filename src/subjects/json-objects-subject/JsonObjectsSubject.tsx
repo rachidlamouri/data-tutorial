@@ -5,10 +5,18 @@ import { Subject } from '../../layout/subject/Subject';
 import { InfoText } from '../../typography/InfoText';
 import { NestedInfo } from '../../layout/learnable/NestedInfo';
 import { ReadOnlyMemoryCell } from '../../memory/MemoryCell';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ByteHeader } from '../../memory/Byte';
+import { useLearnableContext } from '../../learnable-provider/LearnableProvider';
+import { useTrackable } from '../../learnable-provider/useTrackable';
 
 function Learnable0() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack, trackables } = useTrackable({
+    keys: ['object', 'empty', 'one', 'multiple', 'subobject'],
+    onFinish: onLearn,
+  });
+
   const [text, setText] = useState('');
 
   let parsed: unknown = undefined;
@@ -38,6 +46,32 @@ function Learnable0() {
     isObject(parsed) && objectValues.some((value) => Array.isArray(value));
   const hasObject = isObject(parsed) && objectValues.some(isObject);
 
+  useEffect(() => {
+    const object = isObject(parsed) ? parsed : null;
+
+    if (object) {
+      onTrack('object');
+
+      const values = Object.values(object);
+
+      if (values.length === 0) {
+        onTrack('empty');
+      }
+
+      if (values.length === 1) {
+        onTrack('one');
+      }
+
+      if (values.length > 1) {
+        onTrack('multiple');
+      }
+
+      if (values.some(isObject)) {
+        onTrack('subobject');
+      }
+    }
+  }, [onTrack, parsed]);
+
   return (
     <>
       <BulletPoints>
@@ -58,7 +92,7 @@ function Learnable0() {
       </BulletPoints>
       <NestedInfo>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.object} />
           <Typography>
             start with a left curly bracket ( <InfoText>{'{'}</InfoText> ) and
             end with a right curly bracket ( <InfoText>{'}'}</InfoText> )
@@ -70,13 +104,13 @@ function Learnable0() {
       </BulletPoints>
       <NestedInfo>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.empty} />
           <Typography>
             contain zero key / value pairs (<InfoText>be empty</InfoText>)
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.one} />
           <Typography>
             contain one <InfoText>text key</InfoText> followed by a colon ({' '}
             <InfoText>:</InfoText> ) followed by a{' '}
@@ -84,14 +118,14 @@ function Learnable0() {
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.multiple} />
           <Typography>
             contain multiple <InfoText>key / value pairs</InfoText> separated by
             commas
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.subobject} />
           <Typography>
             contain other <InfoText>objects</InfoText>!
           </Typography>

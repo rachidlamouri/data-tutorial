@@ -5,10 +5,18 @@ import { Subject } from '../../layout/subject/Subject';
 import { InfoText } from '../../typography/InfoText';
 import { NestedInfo } from '../../layout/learnable/NestedInfo';
 import { ReadOnlyMemoryCell } from '../../memory/MemoryCell';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ByteHeader } from '../../memory/Byte';
+import { useLearnableContext } from '../../learnable-provider/LearnableProvider';
+import { useTrackable } from '../../learnable-provider/useTrackable';
 
 function Learnable0() {
+  const { onLearn } = useLearnableContext();
+  const { onTrack, trackables } = useTrackable({
+    keys: ['list', 'empty', 'one', 'multiple', 'sublist'],
+    onFinish: onLearn,
+  });
+
   const [text, setText] = useState('');
 
   let parsed: unknown = undefined;
@@ -33,6 +41,30 @@ function Learnable0() {
     parsed.some((value) => typeof value === 'object' && value === null);
   const hasList = isList(parsed) && parsed.some(isList);
 
+  useEffect(() => {
+    const list = isList(parsed) ? parsed : null;
+
+    if (list) {
+      onTrack('list');
+
+      if (list.length === 0) {
+        onTrack('empty');
+      }
+
+      if (list.length === 1) {
+        onTrack('one');
+      }
+
+      if (list.length > 1) {
+        onTrack('multiple');
+      }
+
+      if (list.some(Array.isArray)) {
+        onTrack('sublist');
+      }
+    }
+  }, [onTrack, parsed]);
+
   return (
     <>
       <BulletPoints>
@@ -44,7 +76,7 @@ function Learnable0() {
       </BulletPoints>
       <NestedInfo>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.list} />
           <Typography>
             start with a left square bracket ( <InfoText>[</InfoText> ) and end
             with a right square bracket ( <InfoText>]</InfoText> )
@@ -56,24 +88,24 @@ function Learnable0() {
       </BulletPoints>
       <NestedInfo>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.empty} />
           <Typography>contain zero values (be empty)</Typography>
         </Stack>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.one} />
           <Typography>
             contain one JSON value (ie. <InfoText>numbers</InfoText>,{' '}
             <InfoText>text</InfoText> ...etc)
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.multiple} />
           <Typography>
             contain multiple JSON values separated by commas
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center">
-          <ReadOnlyMemoryCell />
+          <ReadOnlyMemoryCell value={trackables.sublist} />
           <Typography>
             contain other <InfoText>lists</InfoText>!
           </Typography>
