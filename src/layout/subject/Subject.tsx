@@ -1,5 +1,5 @@
 import { Divider, Stack } from '@mui/material';
-import { PropsWithChildren, ReactNode } from 'react';
+import React, { PropsWithChildren, ReactNode } from 'react';
 import { SubjectProvider } from '../../subject-provider/SubjectProvider';
 import { Learnable } from '../learnable/Learnable';
 import { CanHazCandy } from './CanHazCandy';
@@ -24,12 +24,12 @@ export function Subject({ offset, children }: SubjectProps) {
             offsetIndex -
             learnableCount * Math.floor(offsetIndex / learnableCount);
           return (
-            <>
+            <React.Fragment key={childIndex}>
               <Learnable key={childIndex} index={learnableIndex}>
                 {child}
               </Learnable>
               <Divider />
-            </>
+            </React.Fragment>
           );
         })}
         <NestedInfo>

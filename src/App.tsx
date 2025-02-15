@@ -157,9 +157,9 @@ function App() {
                 const leftTitle =
                   typeof subject.title === 'string'
                     ? subject.title
-                    : subject.title.map((value) => {
+                    : subject.title.map((value, index) => {
                         if (value === null) {
-                          return <br />;
+                          return <br key={index} />;
                         }
 
                         return value;
