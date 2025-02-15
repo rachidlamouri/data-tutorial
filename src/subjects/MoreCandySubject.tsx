@@ -1,4 +1,4 @@
-import { Button, Typography } from '@mui/material';
+import { Button } from '@mui/material';
 import { BigPicture } from '../layout/BigPicture';
 import { Subject } from '../layout/subject/Subject';
 import { useLearnableContext } from '../learnable-provider/LearnableProvider';
