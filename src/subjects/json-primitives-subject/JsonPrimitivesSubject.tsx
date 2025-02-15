@@ -250,6 +250,7 @@ function Learnable0() {
               borderColor: theme.palette.action.disabled,
               borderRadius: 5,
               padding: 2,
+              height: 'fit-content',
             }}
             gap={1}
           >

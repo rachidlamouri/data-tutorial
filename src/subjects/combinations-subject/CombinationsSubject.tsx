@@ -41,6 +41,7 @@ function Learnable0() {
               </TableCell>
               <TableCell>
                 <Register
+                  width={60}
                   onChange={() => {
                     onTrack('outdoors');
                   }}
