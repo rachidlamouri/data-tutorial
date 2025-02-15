@@ -34,12 +34,14 @@ export function SubjectProvider({
   learnableCount,
   children,
 }: SubjectProviderProps) {
-  const { initSubjectProgress, updateLearnableProgress } = useSubjectProgress();
+  const { initSubjectProgress, updateLearnableProgress, subjectProgress } =
+    useSubjectProgress();
+
   const [learnables, setLearnables] = useState<LearnableState[]>(
-    Array.from({ length: learnableCount }).map(() => {
+    Array.from({ length: learnableCount }).map((_, index) => {
       return {
-        isLearned: false,
-        isVisible: false,
+        isLearned: subjectProgress[index] ?? false,
+        isVisible: subjectProgress[index] ?? false,
       };
     }),
   );

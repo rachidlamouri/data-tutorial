@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { useSubjectIndexContext } from '../subject-index-provider/SubjectIndexProvider';
 import { subjects } from '../subjects/subjects';
+import useLocalStorage from 'use-local-storage';
 
 type ProgressCtx = {
   progress: boolean[][];
@@ -30,7 +31,10 @@ type ProgressProviderProps = PropsWithChildren<{
 
 export function ProgressProvider({ children, onInit }: ProgressProviderProps) {
   const [initState, setInitState] = useState(false);
-  const [progress, setProgress] = useState<boolean[][]>(subjects.map(() => []));
+  const [progress, setProgress] = useLocalStorage<boolean[][]>(
+    'subject-progress',
+    subjects.map(() => []),
+  );
 
   useEffect(() => {
     if (initState) {
@@ -53,7 +57,7 @@ export function ProgressProvider({ children, onInit }: ProgressProviderProps) {
           }
 
           setProgress((previous) => {
-            return previous.map((previousSubject, index) => {
+            return previous?.map((previousSubject, index) => {
               if (index == subjectIndex) {
                 return Array.from({ length: count }).map(() => false);
               }
@@ -64,7 +68,7 @@ export function ProgressProvider({ children, onInit }: ProgressProviderProps) {
         },
         updateLearnableProgress: (subjectIndex, learnableIndex, progress) => {
           setProgress((previous) => {
-            return previous.map((previousSubject, subIndex) => {
+            return previous?.map((previousSubject, subIndex) => {
               if (subIndex == subjectIndex) {
                 return previousSubject.map((previousLearnable, learnIndex) => {
                   if (learnIndex == learnableIndex) {
